@@ -48,10 +48,10 @@ function Footer() {
 
             {/* Aurora Effect at Bottom */}
             <Aurora
-                colorStops={["balck", "black", "black"]}
-                blend={0.1}
+                colorStops={["light-blue", "light-green", "light-blue"]}
+                blend={0.5}
                 amplitude={6}
-                speed={1.0}
+                speed={2.0}
             />
         </div>
     );
