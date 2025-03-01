@@ -1,6 +1,8 @@
 # EatWell
 
-# Team Name: CL301 - 4Grams
+## Team Name: CL301 - 4Grams
+
+## Theme: Healthcare and Sustainability
 
 ## Overview
 we are building an AI-ML based web application **EatWell**. 
