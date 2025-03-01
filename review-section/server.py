@@ -28,6 +28,11 @@ def post_message():
         return jsonify(message), 201
     return jsonify({'error': 'Failed to save message'}), 500
 
+@app.route('/reviews/<product_name>', methods=['GET'])
+def get_reviews_by_name(product_name):
+    reviews = list(messages_collection.find({"product_name": product_name}, {'_id': 0}))
+    return jsonify(reviews)
+
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')

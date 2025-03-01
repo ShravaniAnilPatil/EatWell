@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useRef, useState, useEffect } from "react"
 import axios from "axios"
 import Webcam from "react-webcam"
@@ -20,18 +22,21 @@ import {
   List,
   ListItem,
   ListItemText,
-  Chip,
+  ListItemAvatar,
+  Avatar,
   Fade,
-  Zoom,
+  Rating,
+  Box,
+  Divider,
 } from "@mui/material"
-import { Mic } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Mic, User, MessageSquare, Send, Search } from "lucide-react"
 import { useAuth } from "../context/AuthContext"
 import "../styles/details.css"
 import NutritionalQualityCard from "../components/NutritionalQualityCard"
 
 const ProductScan = () => {
   const [productName, setProductName] = useState("")
+  const [scannedText, setScannedText] = useState("")
   const [confirmedProductName, setConfirmedProductName] = useState("")
   const [productData, setProductData] = useState(null)
   const [error, setError] = useState("")
@@ -43,6 +48,18 @@ const ProductScan = () => {
   const webcamRef = useRef(null)
   const [isCameraOn, setIsCameraOn] = useState(false)
   const [openSpeechDialog, setOpenSpeechDialog] = useState(false)
+  const [searchAttempted, setSearchAttempted] = useState(false)
+
+  // Review system state variables
+  const [reviews, setReviews] = useState([])
+  const [reviewsLoading, setReviewsLoading] = useState(false)
+  const [reviewsError, setReviewsError] = useState("")
+  const [openReviewDialog, setOpenReviewDialog] = useState(false)
+  const [newReview, setNewReview] = useState({
+    text: "",
+    rating: 0,
+    username: "Anonymous",
+  })
 
   useEffect(() => {
     if (user) {
@@ -58,6 +75,9 @@ const ProductScan = () => {
       }
       const data = await response.json()
       setUserData(data)
+      if (data?.data?.username) {
+        setNewReview((prev) => ({ ...prev, username: data.data.username }))
+      }
     } catch (error) {
       setError(error.message)
     }
@@ -65,32 +85,117 @@ const ProductScan = () => {
 
   const resetScan = () => {
     setProductName("")
+    setScannedText("")
     setConfirmedProductName("")
     setProductData(null)
     setError("")
     setImagePreview(null)
     setIsCameraOn(false)
+    setSearchAttempted(false)
   }
 
-  const fetchProductData = async () => {
-    if (!confirmedProductName.trim()) {
-      setError("Please confirm the product name before searching.")
+  // Function to fetch reviews for a product
+  const fetchReviews = async (productName) => {
+    if (!productName) return
+
+    setReviewsLoading(true)
+    setReviewsError("")
+
+    try {
+      const response = await axios.get(`http://localhost:5050/reviews/${encodeURIComponent(productName)}`)
+      setReviews(response.data)
+    } catch (err) {
+      console.error("Error fetching reviews:", err)
+      setReviewsError("Failed to load reviews. Please try again later.")
+      setReviews([]) // Reset reviews on error
+    } finally {
+      setReviewsLoading(false)
+    }
+  }
+
+  // Function to submit a new review
+  const handleSubmitReview = async () => {
+    if (!newReview.text.trim() || !productData) {
       return
     }
+
+    try {
+      const reviewData = {
+        username: newReview.username || "Anonymous",
+        text: newReview.text,
+        product_name: productData.product_name,
+        review: newReview.rating.toString(), // Convert rating to string for compatibility
+        timestamp: new Date().toISOString(),
+      }
+
+      await axios.post("http://localhost:5050/messages", reviewData)
+      setOpenReviewDialog(false)
+
+      // Reset review form
+      setNewReview({
+        text: "",
+        rating: 0,
+        username: userData?.data?.username || "Anonymous",
+      })
+
+      // Refresh reviews
+      fetchReviews(productData.product_name)
+    } catch (err) {
+      console.error("Error posting review:", err)
+      setReviewsError("Failed to post your review. Please try again.")
+    }
+  }
+
+  // Modified function to search for both scanned text and product name
+  const fetchProductData = async () => {
+    if (!confirmedProductName.trim() && !scannedText.trim()) {
+      setError("Please confirm the product name or scan a product before searching.")
+      return
+    }
+
     setLoading(true)
     setError("")
-    try {
-      const response = await axios.get("http://127.0.0.1:5000/api/product", {
-        params: { name: confirmedProductName },
-      })
-      setProductData(response.data.products[0])
-      setImagePreview(null) // Automatically close image preview
-    } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong!")
-      setProductData(null)
-    } finally {
-      setLoading(false)
+    setSearchAttempted(true)
+
+    // Try with confirmed product name first
+    if (confirmedProductName.trim()) {
+      try {
+        const response = await axios.get("http://127.0.0.1:5000/api/product", {
+          params: { name: confirmedProductName },
+        })
+        if (response.data.products && response.data.products.length > 0) {
+          setProductData(response.data.products[0])
+          fetchReviews(response.data.products[0].product_name)
+          setLoading(false)
+          return
+        }
+      } catch (err) {
+        console.error("Error searching by confirmed name:", err)
+        // Continue to try with scanned text
+      }
     }
+
+    // If confirmed name search failed or wasn't attempted, try with scanned text
+    if (scannedText.trim()) {
+      try {
+        const response = await axios.get("http://127.0.0.1:5000/api/product", {
+          params: { name: scannedText },
+        })
+        if (response.data.products && response.data.products.length > 0) {
+          setProductData(response.data.products[0])
+          fetchReviews(response.data.products[0].product_name)
+          setLoading(false)
+          return
+        }
+      } catch (err) {
+        console.error("Error searching by scanned text:", err)
+      }
+    }
+
+    // If both searches failed
+    setError("Product not found. Please try a different name or scan again.")
+    setProductData(null)
+    setLoading(false)
   }
 
   const capture = async () => {
@@ -133,7 +238,8 @@ const ProductScan = () => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       if (response.data.extracted_text) {
-        setProductName(response.data.extracted_text)
+        setScannedText(response.data.extracted_text)
+        setProductName(response.data.extracted_text) // Also set as product name for user to confirm
         setConfirmedProductName("")
       } else {
         alert("Failed to extract text from the image.")
@@ -271,6 +377,12 @@ const ProductScan = () => {
     </Card>
   )
 
+  // Helper function to format dates
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" }
+    return new Date(dateString).toLocaleDateString(undefined, options)
+  }
+
   return (
     <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
       <Typography variant="h4" gutterBottom align="center" color="#2f524d" fontWeight={600}>
@@ -309,7 +421,8 @@ const ProductScan = () => {
             variant="contained"
             color="primary"
             onClick={fetchProductData}
-            disabled={!confirmedProductName || loading}
+            disabled={(!confirmedProductName && !scannedText) || loading}
+            startIcon={<Search />}
           >
             {loading ? <CircularProgress size={24} /> : "Search"}
           </Button>
@@ -319,13 +432,9 @@ const ProductScan = () => {
             <Mic />
           </IconButton>
         </Grid>
-        {/* <Grid item>
-          <Link to="/imgscan">
-            <Button>Scan</Button>
-          </Link>
-        </Grid> */}
       </Grid>
 
+      {/* Scanning section */}
       <div className="container1">
         <div className="button-group">
           <button
@@ -361,6 +470,11 @@ const ProductScan = () => {
           <div className="preview-container">
             <h2>Image Preview:</h2>
             <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="image-preview" />
+            {scannedText && (
+              <Typography variant="body1" style={{ margin: "10px 0" }}>
+                <strong>Scanned Text:</strong> {scannedText}
+              </Typography>
+            )}
             <Button variant="outlined" color="secondary" onClick={resetScan}>
               Remove Image
             </Button>
@@ -374,6 +488,16 @@ const ProductScan = () => {
         </Typography>
       )}
 
+      {/* No results message */}
+      {searchAttempted && !productData && !loading && !error && (
+        <Box textAlign="center" my={4}>
+          <Typography variant="h6" color="text.secondary">
+            No product found. Please try a different name or scan again.
+          </Typography>
+        </Box>
+      )}
+
+      {/* Product data display */}
       {productData && (
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -384,40 +508,107 @@ const ProductScan = () => {
 
           <Grid item xs={12} md={6}>
             <div style={{ display: "flex", flexDirection: "column", justifyItems: "space-between" }}>
-              
               <ScoreCard
                 title="Nutri-Score"
                 grade={productData.nutri_score}
                 style={getStyle("nutriScore", productData.nutri_score)}
               />
               <Card style={{ padding: "20px", height: "200px" }}>
-              <Typography variant="h6" style={{ marginBottom: "8px" }}>
-                Nutrient Levels<br></br>
-              </Typography>
-              <Grid container spacing={4}>
-                {Object.entries(productData.nutritional_values || {}).map(([key, value]) => (
-                  <Grid item xs={6} md={3} key={key}>
-                    <Typography style={{ marginTop: "15px" }}>
-                      <strong>{key.replace(/_/g, " ")}:</strong> {value || "N/A"}
-                    </Typography>
-                  </Grid>
-                ))}
-              </Grid>
-            </Card>
+                <Typography variant="h6" style={{ marginBottom: "8px" }}>
+                  Nutrient Levels<br></br>
+                </Typography>
+                <Grid container spacing={4}>
+                  {Object.entries(productData.nutritional_values || {}).map(([key, value]) => (
+                    <Grid item xs={6} md={3} key={key}>
+                      <Typography style={{ marginTop: "15px" }}>
+                        <strong>{key.replace(/_/g, " ")}:</strong> {value || "N/A"}
+                      </Typography>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Card>
             </div>
           </Grid>
 
+          {/* Reviews section */}
           <Grid item xs={12} md={6}>
-            <Card style={{ padding: "20px", height: "100%" }}>
-              <div>Reviews</div>
+            <Card style={{ padding: "20px", height: "100%", display: "flex", flexDirection: "column" }}>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Typography variant="h6" fontWeight="bold">
+                  <MessageSquare size={20} style={{ marginRight: "8px", verticalAlign: "middle" }} />
+                  Product Reviews
+                </Typography>
+                <Button variant="contained" color="primary" size="small" onClick={() => setOpenReviewDialog(true)}>
+                  Write Review
+                </Button>
+              </Box>
+
+              {reviewsError && (
+                <Typography color="error" variant="body2" mb={2}>
+                  {reviewsError}
+                </Typography>
+              )}
+
+              <Box sx={{ overflowY: "auto", flexGrow: 1 }}>
+                {reviewsLoading ? (
+                  <Box display="flex" justifyContent="center" py={3}>
+                    <CircularProgress />
+                  </Box>
+                ) : reviews.length > 0 ? (
+                  <List>
+                    {reviews.map((review, index) => (
+                      <React.Fragment key={index}>
+                        <ListItem alignItems="flex-start">
+                          <ListItemAvatar>
+                            <Avatar>
+                              <User />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={
+                              <Box display="flex" justifyContent="space-between">
+                                <Typography variant="subtitle1" fontWeight="bold">
+                                  {review.username || "Anonymous"}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  {review.timestamp ? formatDate(review.timestamp) : "Unknown date"}
+                                </Typography>
+                              </Box>
+                            }
+                            secondary={
+                              <>
+                                <Rating
+                                  value={Number.parseFloat(review.review) || 0}
+                                  readOnly
+                                  size="small"
+                                  precision={0.5}
+                                  sx={{ my: 0.5 }}
+                                />
+                                <Typography variant="body2" color="text.primary">
+                                  {review.text}
+                                </Typography>
+                              </>
+                            }
+                          />
+                        </ListItem>
+                        {index < reviews.length - 1 && <Divider variant="inset" component="li" />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                ) : (
+                  <Box display="flex" justifyContent="center" alignItems="center" height="150px">
+                    <Typography variant="body1" color="text.secondary">
+                      No reviews yet for this product.
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
             </Card>
           </Grid>
 
-         
-
           <Grid item xs={12}>
             <Fade in={true} timeout={1000}>
-              <div >
+              <div>
                 <NutritionalQualityCard nutriScore={productData.nutri_score} getMessage={getNutriScoreMessage} />
               </div>
             </Fade>
@@ -438,29 +629,68 @@ const ProductScan = () => {
                 </List>
               </Card>
             </Grid>
-
           )}
-          
+
           <Grid item xs={12}>
             <Fade in={true} timeout={1000}>
-              <div style={{ height: "500px" }}>
-                Recommendation
-              </div>
+              <div style={{ height: "500px" }}>Recommendation</div>
             </Fade>
-            </Grid>
-          {/* {productData.carbon_footprint && productData.carbon_footprint !== "N/A" && (
-            <Grid item xs={12}>
-              <Card style={{ padding: "20px" }}>
-                <Typography align="left" variant="h6" style={{ marginBottom: "1rem" }}>
-                  Carbon Footprint
-                </Typography>
-                <Typography align="left">{productData.carbon_footprint} g CO2 eq/100g</Typography>
-              </Card>
-            </Grid>
-          )} */}
+          </Grid>
         </Grid>
       )}
 
+      {/* Review Dialog */}
+      <Dialog open={openReviewDialog} onClose={() => setOpenReviewDialog(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Write a Review</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Your Name"
+            fullWidth
+            variant="outlined"
+            value={newReview.username}
+            onChange={(e) => setNewReview({ ...newReview, username: e.target.value })}
+            sx={{ mb: 2 }}
+          />
+          <Box mb={2}>
+            <Typography component="legend">Rating</Typography>
+            <Rating
+              name="rating"
+              value={newReview.rating}
+              onChange={(_, newValue) => {
+                setNewReview({ ...newReview, rating: newValue })
+              }}
+              precision={0.5}
+              size="large"
+            />
+          </Box>
+          <TextField
+            margin="dense"
+            label="Your Review"
+            fullWidth
+            multiline
+            rows={4}
+            variant="outlined"
+            value={newReview.text}
+            onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenReviewDialog(false)}>Cancel</Button>
+          <Button
+            onClick={handleSubmitReview}
+            variant="contained"
+            color="primary"
+            startIcon={<Send size={16} />}
+            disabled={!newReview.text.trim()}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Speech Recognition Dialog */}
       <Dialog open={openSpeechDialog} onClose={() => setOpenSpeechDialog(false)}>
         <DialogTitle>Speech Recognition</DialogTitle>
         <DialogContent>
