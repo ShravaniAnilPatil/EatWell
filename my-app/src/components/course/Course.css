@@ -70,13 +70,14 @@ z-index:11;
 /* Text overlay */
 .course .overlay-text {
   position: absolute;
+  width: 100%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
   /* font-size: 1.5rem; */
   /* font-weight: bold; */
-  text-align: center;
+  /* text-align: center; */
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
@@ -96,7 +97,7 @@ z-index:11;
   font-size: 1rem;
   font-family: "Roboto", sans-serif; /* Readable and professional */
   line-height: 1.6;
-  text-align: center;
+  text-align: left;
   max-width: 80%;
   margin: 0 auto;
   opacity: 0.9; /* Slightly transparent for subtle effect */
@@ -118,7 +119,7 @@ z-index:11;
     text-transform: uppercase; /* Stylish uppercase */
     letter-spacing: 1.5px; /* Adds spacing for clarity */
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     position: relative;
 }
 
