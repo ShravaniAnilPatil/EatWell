@@ -38,6 +38,7 @@ body, html {
     flex-direction: column; 
     gap: 10px;
     border-radius: 0 0 12px 12px;
+    width: 600px;
   }
   
   .message {
@@ -49,12 +50,14 @@ body, html {
     line-height: 1.4;
     word-wrap: break-word;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 600px;
   }
   
   .my-message {
     align-self: flex-end;
     background-color: #e1f7d5;
     color: #333333;
+    width: 700px;
   }
   
   .other-message {

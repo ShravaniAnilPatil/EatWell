@@ -6,6 +6,7 @@ import axios from "axios"
 import { AuthContext } from "../context/AuthContext"
 import SendIcon from "@mui/icons-material/Send"
 import { Paper, TextField, IconButton, Typography, Box } from "@mui/material"
+import { Rating } from "@mui/material";
 
 const socket = io("http://127.0.0.1:5050/", {
   transports: ["websocket", "polling"],
@@ -34,7 +35,7 @@ const styles = {
     margin: 0,
   },
   messagesContainer: {
-    flex: 1,
+    flex: 2,
     padding: "1.5rem",
     overflowY: "auto",
     display: "flex",
@@ -43,7 +44,7 @@ const styles = {
     scrollBehavior: "smooth",
   },
   messageBox: {
-    maxWidth: "85%",
+    maxWidth: "100%",
     padding: "1.5rem",
     borderRadius: "16px",
     position: "relative",
@@ -102,7 +103,7 @@ const styles = {
     },
   },
   productInfo: {
-    fontSize: "0.95rem",
+    fontSize: "1.5rem",
     marginTop: "1rem",
     padding: "0.75rem",
     backgroundColor: "rgba(255,255,255,0.15)",
@@ -270,21 +271,17 @@ const Chat = () => {
             onChange={(e) => setProductName(e.target.value)}
             size="small"
           />
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Enter review"
+          <Rating
+            name="product-rating"
             value={review}
-            onChange={(e) => setReview(e.target.value)}
-            size="small"
-            multiline
-            rows={2}
+            onChange={(event, newValue) => setReview(newValue)}
+            size="large"
           />
           <Box sx={styles.inputWrapper}>
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Type your message..."
+              placeholder="Type your review..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
