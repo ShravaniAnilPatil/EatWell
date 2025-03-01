@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-mongo_uri = os.getenv('MONGO_URI', 'mongodb+srv://shravanipatil1427:Shweta2509@cluster0.wacb8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+mongo_uri = os.getenv('MONGO_URI', 'mongodb+srv://shravanipatil1427:Shweta2509@cluster0.5er8k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 client = MongoClient(mongo_uri)
 db = client['Cluster0']
 messages_collection = db['messages']
