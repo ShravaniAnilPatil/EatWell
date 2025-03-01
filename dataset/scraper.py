@@ -24,7 +24,7 @@ service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 base_url = "https://in.openfoodfacts.org/cgi/search.pl?action=process&search_terms=biscuits&sort_by=unique_scans_n&page_size=50&page="
-total_pages = 1
+total_pages = 9
 
 for page_num in range(1, total_pages + 1):
 
