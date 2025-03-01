@@ -31,40 +31,40 @@ for page_num in range(1, total_pages + 1):
     url = f"{base_url}{page_num}"
     print(f"Scraping URL: {url}")
     link=[]
+    allergen=""
     try:
         driver.get(url)
-        WebDriverWait(driver, 50).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'body')))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'body')))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         box = soup.find("ul", class_="search_results small-block-grid-1 medium-block-grid-4 large-block-grid-6 xlarge-block-grid-8 xxlarge-block-grid-10")
         links=box.find_all("a",class_="list_product_a")
-        print(links)
+        
         
         #Targeting the links of the providers
         for li in links:
-            mod_nutrients_list=[]
-            bad_nutrients_list=[]
-            good_nutrients_list=[]
-            allergen=[]
-            additives=[]
+            
+            
             nutrient_grade=""
 
             url=li.get("href")
             driver.get(url)
-            WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'body')))
+            WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'body')))
             soup = BeautifulSoup(driver.page_source, 'html.parser')
             name=soup.find("h2",class_="title-1") or "Unavailable"
-            quantity=soup.find("span",id="field_quantity_value")
-            if quantity:
-                quantity=quantity.text.strip()
-            else:
-                quantity="Unavailable"
+            
 
-            ing_box=soup.find("div",id="panel_ingredients_content")
-            ingredients=ing_box.find("div",class_="panel_text") 
-            allergens=ing_box.find_all("span",class_="allergen")
-            if allergens:
-                for alrg in allergens:
-                    allergen.append(alrg.text.strip())
+            ing_box = soup.find("div", id="panel_ingredients_content")
+            if ing_box:
+                allergens = ing_box.find_all("div", class_="panel_text")
+                for alg in allergens:
+                    strong_tag = alg.find("strong")  # Find the <strong> tag inside the div
+                    if strong_tag and "Allergens" in strong_tag.get_text():
+                        allergen = alg.get_text(strip=True, separator=" ")
+                        print(allergen)  # Print or store the extracted text
+                        break  # Stop after finding the first match
+
+                
+                
             
 
             for grade_class in ["grade_a_title", "grade_b_title", "grade_c_title", "grade_d_title", "grade_e_title"]:
@@ -99,7 +99,7 @@ for page_num in range(1, total_pages + 1):
                             nutrients["Protein"] = nutrient_value
                         elif "carbohydrate" in nutrient_name.lower():
                             nutrients["Carbohydrates"] = nutrient_value
-                        elif "sugar" in nutrient_name.lower():
+                        elif "sugars" in nutrient_name.lower():
                             nutrients["Sugar"] = nutrient_value
                         elif "fat" in nutrient_name.lower():
                             nutrients["Fat"] = nutrient_value
@@ -109,25 +109,8 @@ for page_num in range(1, total_pages + 1):
                             nutrients["Sodium"] = nutrient_value
 
             
-            additives_box=soup.find("div",id="panel_additives_content")
-            if additives_box:
-                additive=additives_box.find_all("h4")
-                for add in additive:
-                    
-                    additives.append(add.text.strip())
-            nutrient_analysis_box=soup.find("div",id="panel_nutrient_levels_content")
-            if nutrient_analysis_box:
-                mod_title=nutrient_analysis_box.find_all("h4",class_="evaluation_average_title")
-                for mod in mod_title:
-                    mod_nutrients_list.append(mod.text.strip())
-
-                bad_title=nutrient_analysis_box.find_all("h4",class_="evaluation_bad_title")
-                for bad in bad_title:
-                    bad_nutrients_list.append(bad.text.strip())
-
-                good_title=nutrient_analysis_box.find_all("h4",class_="evaluation_good_title")
-                for good in good_title:
-                    good_nutrients_list.append(good.text.strip())
+            
+            
             
 
             if "apple" in allergen:
@@ -137,8 +120,6 @@ for page_num in range(1, total_pages + 1):
             new_entry = {
         "name": name.text.strip() if name else "Not available",
         "nutrient_grade": nutrient_grade if nutrient_grade else "Not available",
-        "quantity": quantity,
-        "ingredients": ingredients.text.strip() if ingredients else "Not available",
         "Protein": nutrients["Protein"],
         "Carbohydrates": nutrients["Carbohydrates"],
         "Sugar": nutrients["Sugar"],
@@ -146,10 +127,7 @@ for page_num in range(1, total_pages + 1):
         "Fiber": nutrients["Fiber"],
         "Sodium": nutrients["Sodium"],
         "allergen": allergen if allergen else "Not available",
-        "additives": additives if additives else "Not available",
-        "mod_nutrients": mod_nutrients_list if mod_nutrients_list else "Not available",
-        "bad_nutrients": bad_nutrients_list if bad_nutrients_list else "Not available",
-        "good_nutrients": good_nutrients_list if good_nutrients_list else "Not available",
+        
         "category":"drinks"
     }
 
@@ -169,7 +147,7 @@ for page_num in range(1, total_pages + 1):
 
             # Save back to CSV
             with open("scraped_data.csv", "w", encoding="utf-8", newline="") as csv_file:
-                fieldnames = ["name","category", "quantity","Protein","Carbohydrates","Sugar","Fat","Fiber","Sodium","nutrition_data","nutrient_grade", "ingredients", "allergen", "additives", "mod_nutrients", "bad_nutrients", "good_nutrients"]
+                fieldnames = ["name","category","Protein","Carbohydrates","Sugar","Fat","Fiber","Sodium","nutrient_grade", "allergen"]
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
                 writer.writeheader()  # Write column headers

@@ -16,9 +16,12 @@ def get_product_info():
     
     if response.status_code == 200:
         data = response.json()
+        
         if data.get("products"):
             products = []
             for product in data["products"]:
+                print(product)
+                print("*****")
                 # Extract product information
                 product_info = {
                     "product_name": product.get("product_name", "N/A"),

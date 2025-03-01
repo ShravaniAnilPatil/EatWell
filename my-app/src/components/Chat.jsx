@@ -1,11 +1,19 @@
-import React, { useState, useEffect, useRef, useContext } from "react"
+"use client"
+
+import { useState, useEffect, useRef, useContext } from "react"
 import io from "socket.io-client"
 import axios from "axios"
 import { AuthContext } from "../context/AuthContext"
 import SendIcon from "@mui/icons-material/Send"
 import { Paper, TextField, IconButton, Typography, Box } from "@mui/material"
+import { Rating } from "@mui/material";
 
-const socket = io("http://localhost:5001")
+const socket = io("http://127.0.0.1:5050/", {
+  transports: ["websocket", "polling"],
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+})
 
 const styles = {
   container: {
@@ -27,7 +35,7 @@ const styles = {
     margin: 0,
   },
   messagesContainer: {
-    flex: 1,
+    flex: 2,
     padding: "1.5rem",
     overflowY: "auto",
     display: "flex",
@@ -36,7 +44,7 @@ const styles = {
     scrollBehavior: "smooth",
   },
   messageBox: {
-    maxWidth: "85%",
+    maxWidth: "100%",
     padding: "1.5rem",
     borderRadius: "16px",
     position: "relative",
@@ -95,7 +103,7 @@ const styles = {
     },
   },
   productInfo: {
-    fontSize: "0.95rem",
+    fontSize: "1.5rem",
     marginTop: "1rem",
     padding: "0.75rem",
     backgroundColor: "rgba(255,255,255,0.15)",
@@ -138,19 +146,37 @@ const Chat = () => {
   }, [user])
 
   useEffect(() => {
-    fetch("http://localhost:5001/messages")
+    console.log("Connecting to socket server...")
+    fetch("http://127.0.0.1:5050/messages")
       .then((res) => res.json())
       .then((data) => setMessages(data))
+      .catch((err) => console.error("Error fetching messages:", err))
+
+    socket.on("connect", () => {
+      console.log("Socket connected successfully:", socket.id)
+    })
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error)
+    })
 
     socket.on("message", (message) => {
+      console.log("Received message:", message)
       setMessages((prevMessages) => [...prevMessages, message])
     })
 
-    return () => socket.disconnect()
+    return () => {
+      console.log("Cleaning up socket connection...")
+      socket.off("message")
+      socket.off("connect")
+      socket.off("connect_error")
+      socket.disconnect()
+    }
   }, [])
 
   const sendMessage = () => {
     if (!username || !input || !productName || !review) return
+
     const message = {
       username,
       text: input,
@@ -158,8 +184,31 @@ const Chat = () => {
       review: review,
       timestamp: new Date().toISOString(),
     }
-    socket.emit("message", message)
-    setMessages((prevMessages) => [...prevMessages, message])
+
+    // Send message via HTTP POST first
+    fetch("http://127.0.0.1:5050/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        return response.json()
+      })
+      .then((data) => {
+        console.log("Message sent successfully:", data)
+        // Don't need to update messages here as the socket will emit it back
+      })
+      .catch((error) => {
+        console.error("Error sending message:", error)
+        // Fallback: update UI even if server request failed
+        setMessages((prevMessages) => [...prevMessages, message])
+      })
+
     setInput("")
     setProductName("")
     setReview("")
@@ -167,7 +216,7 @@ const Chat = () => {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [])
+  }, [messages])
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -222,21 +271,17 @@ const Chat = () => {
             onChange={(e) => setProductName(e.target.value)}
             size="small"
           />
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Enter review"
+          <Rating
+            name="product-rating"
             value={review}
-            onChange={(e) => setReview(e.target.value)}
-            size="small"
-            multiline
-            rows={2}
+            onChange={(event, newValue) => setReview(newValue)}
+            size="large"
           />
           <Box sx={styles.inputWrapper}>
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Type your message..."
+              placeholder="Type your review..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
