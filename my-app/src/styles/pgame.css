@@ -1,0 +1,43 @@
+.pan {
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    min-height: 100vh;
+    background-image: url('../images/pantry.jpg');
+    background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  }
+  
+  h1 {
+    
+    color: #ffffff;
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  p {
+    font-size: 1.6rem;
+    color: #e5f9f1;
+    margin-bottom: 20px;
+  }
+  
+  

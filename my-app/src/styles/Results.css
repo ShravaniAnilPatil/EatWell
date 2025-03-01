@@ -1,0 +1,49 @@
+.results {
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .results h2 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .results ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .results li {
+    margin: 10px 0;
+    font-size: 1.2rem;
+    color: #555;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+  }
+  
+  .results p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #4caf50;
+  }
+  
+  .evaluation {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #333;
+    padding: 15px;
+    background-color: #e6fff8;
+    border-radius: 5px;
+    border-left: 5px solid #18ffd1;
+  }
+  

@@ -1,0 +1,9 @@
+.landingcont{
+    color: #2f524d;
+    height: 770px;
+    background-color: rgb(188, 250, 235);
+}
+
+.landing{
+    width: -webkit-fill-available;
+}
