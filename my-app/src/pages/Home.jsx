@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom'; // Correctly import `useNavigate`
 import "../styles/Home.css";
 import Landing from '../components/Landing.jsx';
-import Course from '../components/Course.jsx';
+import Course from '../components/course/Course.jsx';
 import a from '../images/prod_analysis.png';
 import b from '../images/recommendation.png';
 import c from '../images/recycle.png';
@@ -53,15 +53,14 @@ const Home = () => {
       <section>
         <h1 style={{ fontSize: '2.2rem', color: '#2f524d' }}>Features</h1>
         <div className='featurescont'>
-          <Course id="co1" imgSrc={a} description="Product Analysis" />
-          <Course id="co2" imgSrc={b} description="Recommendations" />
-          <Course id="co3" imgSrc={c} description="Sustainability Analysis" />
-          <Course id="co4" imgSrc={d} description="Reviews" />
-          <Course id="co5" imgSrc={e} description="Health Risk Assessment" />
+          <Course id="co1" imgSrc={a} text="Product Analysis" description="Analyse the products you consume." />
+          <Course id="co2" imgSrc={b} text="Recommendations" description="Get healthier recommendations based on your profile."/>
+          <Course id="co3" imgSrc={c} text="Sustainability Analysis" description="Helping you socially and environmentally sustainable choices."/>
+          <Course id="co5" imgSrc={d} text="Reviews" description="Get peer reviews about the products you consume."/>
         </div>
       </section>
 
-      <section>
+      {/* <section>
         <footer className="footer-container" id="contact">
           <div className="footer-content">
             <div className="footer-section">
@@ -87,7 +86,7 @@ const Home = () => {
             <p>© 2025 NutriCheck. All rights reserved.</p>
           </div>
         </footer>
-      </section>
+      </section> */}
     </div>
   );
 };

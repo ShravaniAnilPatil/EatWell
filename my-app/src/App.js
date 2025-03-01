@@ -17,6 +17,7 @@ import Quizgame from './pages/monthdiet';
 import MonthlyDiet from './pages/Monthlydiet';
 import Dietgame from './pages/monthdiet';
 import Navbar from './components/Navbar';
+import Footer from './components/footer/Footer';
 
 // import Quiz from './game/quiz';
 
@@ -48,6 +49,7 @@ function App() {
         <Route path="/games" element={<Dietgame />} /> */}
 
         </Routes>
+        <Footer />
       </BrowserRouter>
       </AuthProvider>
     </div>

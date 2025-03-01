@@ -1,0 +1,168 @@
+.footer {
+    width: 100%;
+    height: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Aurora effect at the bottom */
+  .aurora-container {
+    width: 100%;
+    height: 10rem;
+  }
+  
+  .footer_content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    height: 20rem;
+    background-color: #043230;
+    padding: 2rem;
+  }
+  
+  /* Left Section - TrueFocus + Info */
+  .footer_left {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .footer_info {
+    font-size: 1rem;
+    color: #ddd;
+    margin-top: 10px;
+    max-width: 300px;
+  }
+  
+  /* Center Section - Quick Links */
+
+  .footer_links {
+    flex: 1;
+    text-align: center;
+    padding: 1rem 0;
+  }
+  
+  .footer_links h3 {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  .footer_links ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .footer_links ul li {
+    margin: 8px 0;
+  }
+  
+  .footer_links ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footer_links ul li a:hover {
+    color: #00d8ff;
+  }
+  
+  /* Right Section - Contact Info */
+  .footer_contact {
+    flex: 1;
+    text-align: right;
+    padding: 1rem 0;
+  }
+  
+  .footer_contact h3 {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  .footer_contact p {
+    font-size: 1rem;
+    color: #ddd;
+    margin: 5px 0;
+    
+  }
+
+  /* -------------------------------------------------------------------------------------------------------------- */
+
+  .footer_link_list ul {
+    list-style: none; /* Removes bullet points */
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    gap: 1px; /* Add space between links */
+}
+
+.footer_link_list ul li {
+    display: block; /* Ensures each link takes full width */
+}
+
+.footer_link_list ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: color 0.3s ease-in-out;
+    padding: 1px 0; /* Adds clickable area */
+    display: inline-block; /* Ensures padding applies correctly */
+}
+
+.footer_link_list ul li a:hover {
+    color: #00d8ff; /* Changes color on hover */
+}
+/* --------------------------------------------------------------------------------------------------------------- */
+  
+  /* Focus Container - TrueFocus Styling */
+  .focus-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+  }
+  
+  /* Words */
+  .focus-word {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition:
+      filter 0.3s ease,
+      color 0.3s ease;
+  }
+  
+  .focus-word.active {
+    filter: blur(0);
+  }
+  
+  /* Frame for TrueFocus */
+  .focus-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border: none;
+  }
+  
+  .corner {
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    border: 3px solid var(--border-color, #fff);
+    filter: drop-shadow(0px 0px 4px var(--border-color, #fff));
+    border-radius: 3px;
+    transition: none;
+  }
+  
+  .top-left { top: -10px; left: -10px; border-right: none; border-bottom: none; }
+  .top-right { top: -10px; right: -10px; border-left: none; border-bottom: none; }
+  .bottom-left { bottom: -10px; left: -10px; border-right: none; border-top: none; }
+  .bottom-right { bottom: -10px; right: -10px; border-left: none; border-top: none; }
+  

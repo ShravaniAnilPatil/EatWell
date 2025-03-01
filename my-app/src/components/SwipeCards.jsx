@@ -4,6 +4,7 @@ import "./SwipeCards.css"; // Importing external CSS
 
 import scanhome from '../images/scanhome.png';
 import play from '../images/play.png';
+import rating from '../images/rating.png';
 import analysis from '../images/analysis.png';
 
 const cardData = [
@@ -22,11 +23,11 @@ const cardData = [
       image: analysis
     },
     {
-      title: "Play a Game",
-      description: "Engage in fun activities to learn about healthy eating.",
-      buttonText: "Play Now",
+      title: "Peer Reviews",
+      description: "Get peer reviews about the products you consume.",
+      buttonText: "Review Now",
       color: "#ab2459",
-      image: play
+      image: rating
     },
   ];
 

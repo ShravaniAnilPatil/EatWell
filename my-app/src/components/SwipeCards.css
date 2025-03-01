@@ -33,4 +33,22 @@
   .card:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
   }
+
+  .card img{
+    width: 200; 
+    height: 200; 
+    margin: 20;
+  }
+
+  .card h2{
+    color: aliceblue;
+  }
+
+  .card p{
+    color: aliceblue;
+  }
+
+  .card button{
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  }
   

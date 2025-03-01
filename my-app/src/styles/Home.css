@@ -25,7 +25,7 @@ body{
     flex-direction: column;
     align-items: center;
     width: 100%; /* Adjusted for responsiveness */
-    max-width: 1600px;
+    max-width: 1200px;
     padding: 20px; 
     margin: auto ;
     margin-top: 2rem;
@@ -37,6 +37,33 @@ body{
     color: #2f524d;
    
 }
+
+.game > button {
+  background: linear-gradient(135deg, #043230, #08655a); /* Modern gradient */
+  color: white;
+  padding: 15px 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 5px 10px #043230; /* Subtle glow */
+}
+
+.game > button:hover {
+  background: linear-gradient(135deg, #698406, #8fbf1c); /* Bright hover effect */
+  transform: translateY(-3px); /* Lift effect */
+  box-shadow: 0px 8px 15px #043230; /* Stronger glow */
+}
+
+.game > button:active {
+  transform: scale(0.95); /* Click feedback effect */
+  box-shadow: 0px 4px 8px rgba(0, 255, 200, 0.2);
+}
+
 
 .featurescont{
   top: 100%;

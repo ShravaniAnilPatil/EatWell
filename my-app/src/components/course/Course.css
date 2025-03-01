@@ -1,0 +1,136 @@
+/* body{
+top: 100%;
+height: 100vh;
+width: 100%;
+background-color:  rgb(0, 0, 0);
+display: flex;
+flex-direction: row;
+justify-content: center;
+gap: 25px;
+padding: 65px 20px;
+z-index:11;    
+} */
+
+/* .course_wrapper{
+  display: flex;
+  align-items: space-between;
+  gap: 50px;
+}
+
+.magnett {
+  display: flex;
+  align-items: center;
+  height: 100%;
+} */
+
+.course {
+  display: flex;
+  align-items: center;
+  border-radius: 15px;
+  height: 80vh;
+  width: 22vw;
+  /* background-color:  #2f524d; */
+  background-color: rgb(24, 122, 101);
+  margin-bottom: 20px;
+}
+
+.course > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 75%;
+  width: 100%;
+  border-radius: 15px;
+  /* background-color: #043230; */
+  background-color: rgb(20, 92, 76);
+  overflow: hidden;
+  position: relative;
+}
+
+.course > div > div {
+  height: 60%;
+  width: 100%;
+  border-radius: 15px;
+  background-color: #043230;
+}
+
+/* .course div img {
+      height: 100%;
+      width: 100%;
+      border-radius: 15px;
+    } */
+
+.course div img {
+  height: 100%;
+  width: 100%;
+  border-radius: 15px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Text overlay */
+.course .overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  /* font-size: 1.5rem; */
+  /* font-weight: bold; */
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Hide image and show text on hover */
+.course > div:hover img {
+  opacity: 0;
+}
+
+.course > div:hover .overlay-text {
+  opacity: 1;
+}
+
+/* Paragraphs */
+.overlay-text > p {
+  color: #d1e8e2; /* Soft white-green */
+  font-size: 1rem;
+  font-family: "Roboto", sans-serif; /* Readable and professional */
+  line-height: 1.6;
+  text-align: center;
+  max-width: 80%;
+  margin: 0 auto;
+  opacity: 0.9; /* Slightly transparent for subtle effect */
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Hover effect for better readability */
+.overlay-text > p:hover {
+  opacity: 1;
+  color: #ffffff;
+}
+
+
+/* Headings */
+.overlay-text > h3 {
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif; /* Modern and clean font */
+    font-weight: 700; /* Bold for impact */
+    text-transform: uppercase; /* Stylish uppercase */
+    letter-spacing: 1.5px; /* Adds spacing for clarity */
+    text-align: center;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* Subtle glow effect for headings */
+.overlay-text > h3::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: #00ffc8;
+    border-radius: 2px;
+}

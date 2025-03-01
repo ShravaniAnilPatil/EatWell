@@ -40,15 +40,15 @@
   .links a{
     color: rgb(13, 52, 44);
     text-decoration: none;
-    padding: 30px 20px;
+    padding: 20px 10px;
     font-size: larger;
 
   
   }
 
   .btn {
-    background-color: rgb(210, 243, 236);
-    color:#29554f;
+    background-color: #29554f;
+    color:rgb(210, 243, 236);
     width: 120px;
     height: 35px;
     border: none;
