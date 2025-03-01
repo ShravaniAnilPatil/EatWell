@@ -39,14 +39,11 @@ const NutritionalQualityCard = ({ nutriScore, getMessage }) => {
             {nutriScore}
           </Typography>
         </motion.div>
-        <Button variant="outlined" onClick={() => setShowDetails(!showDetails)} fullWidth>
-          {showDetails ? "Hide Details" : "Show Details"}
-        </Button>
-        <Zoom in={showDetails}>
-          <Typography variant="body1" style={{ marginTop: "20px", textAlign: "center" }}>
-            {getMessage(nutriScore)}
-          </Typography>
-        </Zoom>
+        
+        <Typography variant="body1" style={{ marginTop: "20px", textAlign: "center" }}>
+          {getMessage(nutriScore)}
+        </Typography>
+
       </CardContent>
     </Card>
   )

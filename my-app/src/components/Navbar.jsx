@@ -12,7 +12,7 @@ const Navbar = () => {
             <li ><img src={nutrilogo} className="logo"></img></li>
             <li className="links"><Link to="/">Home</Link></li>
             <li className="links"><Link to="/details">Scan</Link></li>
-            <li className="links"><Link to="/chat">Community</Link></li>
+            <li className="links"><Link to="/chat">Review Section</Link></li>
             <li className="links"><Link to="/monthlydiet">Diet Assessment</Link></li>
             
             </ul> 

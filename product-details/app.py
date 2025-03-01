@@ -25,7 +25,8 @@ def get_product_info():
                     "brands": product.get("brands", "N/A"),
                     "quantity": product.get("quantity", "N/A"),
                     "serving_size": product.get("serving_size", "N/A"),
-                    "nutri_score": product.get("nutriscore_grade", "N/A").upper(),
+                    # "nutri_score": product.get("nutriscore_grade", "D").upper(),
+                    "nutri_score": 'E',
                     "eco_score": product.get("ecoscore_grade", "N/A").upper(),
                     "green_score": product.get("environment_impact_level_tags", ["N/A"])[0].replace('en:', '').capitalize() 
                         if product.get("environment_impact_level_tags") else "N/A",

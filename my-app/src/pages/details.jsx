@@ -248,7 +248,7 @@ const ProductScan = () => {
     <Card
       style={{
         padding: "20px",
-        marginBottom: "20px",
+        marginBottom: "30px",
         backgroundColor: style.backgroundColor,
         transition: "all 0.3s ease",
         cursor: "pointer",
@@ -384,76 +384,40 @@ const ProductScan = () => {
 
           <Grid item xs={12} md={6}>
             <div style={{ display: "flex", flexDirection: "column", justifyItems: "space-between" }}>
-              <ScoreCard
-                title="Eco-Score"
-                grade={productData.eco_score}
-                style={getStyle("ecoScore", productData.eco_score)}
-              />
+              
               <ScoreCard
                 title="Nutri-Score"
                 grade={productData.nutri_score}
                 style={getStyle("nutriScore", productData.nutri_score)}
               />
-            </div>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Card style={{ padding: "20px", height: "100%" }}>
-              <Typography variant="h6" gutterBottom>
-                Ingredients
+              <Card style={{ padding: "20px", height: "200px" }}>
+              <Typography variant="h6" style={{ marginBottom: "8px" }}>
+                Nutrient Levels<br></br>
               </Typography>
-              <Typography variant="body1" style={{ whiteSpace: "pre-wrap" }}>
-                {productData.ingredients || "No ingredients information available."}
-              </Typography>
-            </Card>
-          </Grid>
-
-          {/* <Grid item xs={12}>
-            <Card style={{ padding: "20px" }}>
-              <Typography variant="h6" gutterBottom>
-                Allergens
-              </Typography>
-              {productData.allergens ? (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                  {productData.allergens.split(",").map((allergen, index) => (
-                    <Chip key={index} label={allergen.trim()} color="primary" variant="outlined" />
-                  ))}
-                </div>
-              ) : (
-                <Typography>No allergen information available.</Typography>
-              )}
-            </Card>
-          </Grid> */}
-
-          <Grid item xs={12}>
-            <Card style={{ padding: "20px" }}>
-              <Typography variant="h6" gutterBottom>
-                Nutrient Levels
-              </Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={4}>
                 {Object.entries(productData.nutritional_values || {}).map(([key, value]) => (
                   <Grid item xs={6} md={3} key={key}>
-                    <Typography>
+                    <Typography style={{ marginTop: "15px" }}>
                       <strong>{key.replace(/_/g, " ")}:</strong> {value || "N/A"}
                     </Typography>
                   </Grid>
                 ))}
               </Grid>
             </Card>
+            </div>
           </Grid>
 
-          <Grid item xs={12}>
-            <Card style={{ padding: "20px" }}>
-              <Typography align="left" variant="h6" style={{ marginBottom: "1rem" }}>
-                Nutrient Analysis
-              </Typography>
-              {renderNutrientChart()}
+          <Grid item xs={12} md={6}>
+            <Card style={{ padding: "20px", height: "100%" }}>
+              <div>Reviews</div>
             </Card>
           </Grid>
 
+         
+
           <Grid item xs={12}>
             <Fade in={true} timeout={1000}>
-              <div>
+              <div >
                 <NutritionalQualityCard nutriScore={productData.nutri_score} getMessage={getNutriScoreMessage} />
               </div>
             </Fade>
@@ -474,9 +438,17 @@ const ProductScan = () => {
                 </List>
               </Card>
             </Grid>
-          )}
 
-          {productData.carbon_footprint && productData.carbon_footprint !== "N/A" && (
+          )}
+          
+          <Grid item xs={12}>
+            <Fade in={true} timeout={1000}>
+              <div style={{ height: "500px" }}>
+                Recommendation
+              </div>
+            </Fade>
+            </Grid>
+          {/* {productData.carbon_footprint && productData.carbon_footprint !== "N/A" && (
             <Grid item xs={12}>
               <Card style={{ padding: "20px" }}>
                 <Typography align="left" variant="h6" style={{ marginBottom: "1rem" }}>
@@ -485,7 +457,7 @@ const ProductScan = () => {
                 <Typography align="left">{productData.carbon_footprint} g CO2 eq/100g</Typography>
               </Card>
             </Grid>
-          )}
+          )} */}
         </Grid>
       )}
 
