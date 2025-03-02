@@ -17,7 +17,7 @@ we are building an AI-ML based web application **EatWell**.
 **EatWell** uses a large dataset of packaged food products to analyse the contents and display the right amount of nutrients, it categorises them as beneficial, neutral and harmful. 
 Moreover, Sameer now can fill in his and his family’s health details to get product recommendations based on their current and past health conditions, getting the right information about products that can trigger the allergies. 
 A step further he’ll also be recommended about healthier alternatives to the product he scanned.  
-Thereby NutriCheck helps every Indian household to become more aware about their food consumption, makes them health conscious and improves social sustainability.
+Thereby EatWell helps every Indian household to become more aware about their food consumption, makes them health conscious and improves social sustainability.
 
 
 # what we offer:
