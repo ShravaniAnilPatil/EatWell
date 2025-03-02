@@ -32,7 +32,7 @@ Thereby NutriCheck helps every Indian household to become more aware about their
 
 ## Tech Stack
 - **Frontend**: React
-- **Backend**: Django
+- **Backend**: Django, Flask
 - **Database**: MongoDB
 - **Dataset**: https://world.openfoodfacts.org/
 
