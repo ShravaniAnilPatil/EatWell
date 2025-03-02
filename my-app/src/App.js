@@ -11,16 +11,16 @@ import Imgscan from './components/imgscan';
 import WebcamCapture from './components/WebCamCapture';
 import Chat from './components/Chat';
 import GamesBoard from './pages/GamesBoard';
-// import Results from './game/results';
+import Results from './game/results';
 import Quizgame from './pages/monthdiet';
-// import Pantrygame from "./game/pantrygame";
+import Pantrygame from "./game/pantrygame";
 import MonthlyDiet from './pages/Monthlydiet';
 import Dietgame from './pages/monthdiet';
 import Navbar from './components/Navbar';
 import Footer from './components/footer/Footer';
 import ProductClassification from './components/classification/Classification';
 
-// import Quiz from './game/quiz';
+import Quiz from './game/quiz';
 
 function App() {  
   return (
@@ -39,7 +39,7 @@ function App() {
           <Route path='/chat' element={<Chat/>}/>
           <Route path='/monthlydiet' element={<MonthlyDiet/>}/>
           <Route path='/classification' element={<ProductClassification/>}/>
-          {/* <Route path='/quiz' element={<Quiz/>}/>
+           <Route path='/quiz' element={<Quiz/>}/>
           <Route path="/quizgame" element={<Quizgame />} />
         <Route path="/results" element={<Results />} />
 
@@ -47,7 +47,7 @@ function App() {
         
         <Route path="/pantry" element={<Pantrygame />} />
 
-        <Route path="/games" element={<Dietgame />} /> */}
+        <Route path="/games" element={<Dietgame />} />
 
         </Routes>
         <Footer />
