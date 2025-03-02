@@ -19,7 +19,7 @@ import Dietgame from './pages/monthdiet';
 import Navbar from './components/Navbar';
 import Footer from './components/footer/Footer';
 import ProductClassification from './components/classification/Classification';
-
+import AlternativeProducts from './components/altrecommend';
 import Quiz from './game/quiz';
 
 function App() {  
@@ -39,6 +39,7 @@ function App() {
           <Route path='/chat' element={<Chat/>}/>
           <Route path='/monthlydiet' element={<MonthlyDiet/>}/>
           <Route path='/classification' element={<ProductClassification/>}/>
+          <Route path='/alternatives' element={<AlternativeProducts/>}/>
            <Route path='/quiz' element={<Quiz/>}/>
           <Route path="/quizgame" element={<Quizgame />} />
         <Route path="/results" element={<Results />} />
