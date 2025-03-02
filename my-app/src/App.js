@@ -5,7 +5,7 @@ import Home from './pages/Home';
 import ProductInfo from './pages/details';
 import Recommendations from './pages/alternates';
 import Login from './Auth/Login';
-import UserSignUp from './Auth/Signup';
+import UserSignUp from './Auth/Signup'; 
 import {  AuthProvider } from "./context/AuthContext";
 import Imgscan from './components/imgscan';
 import WebcamCapture from './components/WebCamCapture';
