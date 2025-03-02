@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { color, motion } from "framer-motion";
+import { useNavigate } from "react-router-dom"; 
 import "./SwipeCards.css"; // Importing external CSS
 
 import scanhome from '../images/scanhome.png';
-import play from '../images/play.png';
+import diet from '../images/diet.png';
 import rating from '../images/rating.png';
 import analysis from '../images/analysis.png';
 
@@ -13,27 +14,30 @@ const cardData = [
       description: "Analyze food labels and detect misleading claims.",
       buttonText: "Scan Now",
       color: "#2c485c",
-      image: scanhome
+      image: scanhome,
+      path: "./details" 
     },
     {
       title: "Check Monthly Diet",
       description: "Get insights on your diet and track nutritional intake.",
       buttonText: "Check Now",
       color: "#fbbc22",
-      image: analysis
+      image: diet,
+      path: "./monthlydiet"
     },
     {
       title: "Peer Reviews",
       description: "Get peer reviews about the products you consume.",
       buttonText: "Review Now",
       color: "#ab2459",
-      image: rating
+      image: rating,
+      path: "./chat"
     },
   ];
 
 const SwipeCards = () => {
   const [selected, setSelected] = useState(null);
-
+  const navigate = useNavigate();
   return (
     <div className="container">
       <div className="card-row">
@@ -54,7 +58,10 @@ const SwipeCards = () => {
           >
             <h2>{card.title}</h2>
             <p>{card.description}</p>
-            <button style={{ width: 120, height: 40, margin: 20 , borderRadius: 10,  backgroundColor: "#fff", color: "#000", fontSize: 16, fontWeight: "bold" }}>{card.buttonText}</button>
+            <button style={{ width: 120, height: 40, margin: 20 , borderRadius: 10,  backgroundColor: "#fff", color: "#000", fontSize: 16, fontWeight: "bold" }} onClick={(e) => {
+                e.stopPropagation(); // Prevent parent div click event
+                navigate(card.path); // Navigate to the specified path
+              }}>{card.buttonText}</button>
             <img style={{ width: 200, height: 200, margin: 20 }} src={card.image} alt="card" />
           </motion.div>
         ))}

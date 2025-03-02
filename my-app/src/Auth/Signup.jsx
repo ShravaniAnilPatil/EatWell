@@ -106,22 +106,8 @@ const UserSignUp = () => {
                   onChange={handleChange}
                   required
                 />
-                <label htmlFor="phone_number">Phone</label>
-                <input
-                  type="text"
-                  id="phone_number"
-                  value={formData.phone_number}
-                  onChange={handleChange}
-                  required
-                />
-                <label htmlFor="email">City</label>
-                <input
-                  type="text"
-                  id="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  required
-                />
+                
+                
               </div>
             )}
 

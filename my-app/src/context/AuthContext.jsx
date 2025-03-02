@@ -3,23 +3,24 @@ import { createContext, useState, useEffect, useContext } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const savedUser = localStorage.getItem("user");
-  const [user, setUser] = useState(savedUser ? JSON.parse(savedUser) : null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    setIsLoggedIn(!!token);
-  }, []);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("authToken"));
+  const [email, setEmail] = useState(user?.email || "");
 
   useEffect(() => {
     if (user) {
       setEmail(user.email);
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("authToken", user.authToken); // Ensure authToken is saved
+      setIsLoggedIn(true);
     } else {
       localStorage.removeItem("user");
+      localStorage.removeItem("authToken");
       setEmail("");
+      setIsLoggedIn(false);
     }
   }, [user]);
 
@@ -29,7 +30,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("authToken");
   };
 
   return (
