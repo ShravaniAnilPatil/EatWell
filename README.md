@@ -26,7 +26,7 @@ Thereby NutriCheck helps every Indian household to become more aware about their
   
 
 <br>Ingredient Analysis - Analyses and displays the actual ingredients of the product scanned.</br>
-<br>Product Classification - C;assifies the scanned product as Beneficial, Neutral and Harmful based on a point-based nutritional profiling system.</br>
+<br>Product Classification - Classifies the scanned product as Beneficial, Neutral and Harmful based on a point-based nutritional profiling system.</br>
 <br>Healthier alternative recommendation - Scans the allergens in the product and recommends alternatives that are not allergic to user and has a better nutritional value.</br>
 
 
