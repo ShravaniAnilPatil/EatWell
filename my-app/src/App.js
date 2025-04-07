@@ -21,7 +21,7 @@ import Footer from './components/footer/Footer';
 import ProductClassification from './components/classification/Classification';
 import AlternativeProducts from './components/altrecommend';
 import Quiz from './game/quiz';
-import PredictForm from './pages/predict'
+import PredictForm from './components/predict'
 import { BrowserRouter , Routes, Route, Navigate } from 'react-router-dom';
 
 
