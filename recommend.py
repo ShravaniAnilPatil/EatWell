@@ -43,13 +43,7 @@ def compute_health_score(product):
     print(score)
     return score
 
-
-
-
 df["health_score"] = df.apply(compute_health_score, axis=1)
-
-
-
 @app.route("/recommend", methods=["GET"])
 def recommend_healthier_alternative():
     product_name = request.args.get("product_name")
@@ -83,4 +77,4 @@ def recommend_healthier_alternative():
     return jsonify({"healthier_alternatives": healthier_alternatives.sort_values(by="health_score", ascending=False).head(5).to_dict(orient="records")})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5010)
