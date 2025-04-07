@@ -39,13 +39,13 @@ const SwipeCards = () => {
   const [selected, setSelected] = useState(null);
   const navigate = useNavigate();
   return (
-    <div className="container">
-      <div className="card-row">
+    <div className="containerswipe">
+      <div className="card-rows">
 
          {cardData.map((card, index) => (
           <motion.div
             key={index}
-            className="card"
+            className="card-swipe"
             style={{ backgroundColor: card.color }}
             initial={{ width: 500 }}
             animate={{
