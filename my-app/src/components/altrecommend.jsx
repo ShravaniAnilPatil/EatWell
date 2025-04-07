@@ -15,7 +15,7 @@ const AlternativeProducts = () => {
         setAlternatives([]);  // Clear previous results
 
         try {
-            const response = await fetch(`http://127.0.0.1:5002/recommend?product_name=${encodeURIComponent(productName)}`);
+            const response = await fetch(`http://127.0.0.1:5010/recommend?product_name=${encodeURIComponent(productName)}`);
             console.log("sent")
             const data = await response.json();
             console.log(data)

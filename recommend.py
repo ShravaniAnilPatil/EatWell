@@ -37,12 +37,12 @@ def compute_health_score(product):
         "Fat": -0.2,
         "Sodium": -0.3
     }
-    return sum(extract_numeric(product[nutrient]) * weight for nutrient, weight in weight_factors.items())
 
-# Compute health scores
+    score = sum(extract_numeric(product[nutrient]) * weight for nutrient, weight in weight_factors.items())
+    print(score)
+    return score
+
 df["health_score"] = df.apply(compute_health_score, axis=1)
-
-
 @app.route("/recommend", methods=["GET"])
 def recommend_healthier_alternative():
     product_name = request.args.get("product_name")
@@ -76,4 +76,4 @@ def recommend_healthier_alternative():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5010)
