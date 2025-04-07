@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import Home from './pages/Home';
 import ProductInfo from './pages/details';
 import Recommendations from './pages/alternates';
@@ -21,6 +21,9 @@ import Footer from './components/footer/Footer';
 import ProductClassification from './components/classification/Classification';
 import AlternativeProducts from './components/altrecommend';
 import Quiz from './game/quiz';
+import PredictForm from './pages/predict'
+import { BrowserRouter , Routes, Route, Navigate } from 'react-router-dom';
+
 
 function App() {  
   return (
@@ -49,6 +52,8 @@ function App() {
         <Route path="/pantry" element={<Pantrygame />} />
 
         <Route path="/games" element={<Dietgame />} />
+        <Route path="/predict" element={<PredictForm />} />
+        <Route path="*" element={<Navigate to="/predict" replace />} />
 
         </Routes>
         <Footer />
