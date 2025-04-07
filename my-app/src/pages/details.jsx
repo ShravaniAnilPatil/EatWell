@@ -161,7 +161,7 @@ const ProductScan = () => {
     // Try with confirmed product name first
     if (confirmedProductName.trim()) {
       try {
-        const response = await axios.get("http://127.0.0.1:5010/api/product", {
+        const response = await axios.get("http://127.0.0.1:5000/api/product", {
           params: { name: confirmedProductName },
         })
         if (response.data.products && response.data.products.length > 0) {
