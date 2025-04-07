@@ -6,6 +6,7 @@ import Webcam from "react-webcam"
 import { Bar } from "react-chartjs-2"
 import "chart.js/auto"
 import AlternativeProducts from "../components/altrecommend"
+import "../styles/details.css"
 import {
   Grid,
   Typography,
@@ -13,7 +14,7 @@ import {
   Button,
   Paper,
   CircularProgress,
-  IconButton,
+  IconButton, 
   Card,
   Dialog,
   DialogTitle,
@@ -150,55 +151,55 @@ const ProductScan = () => {
   // Modified function to search for both scanned text and product name
   const fetchProductData = async () => {
     if (!confirmedProductName.trim() && !scannedText.trim()) {
-      setError("Please confirm the product name or scan a product before searching.")
-      return
+      setError("Please confirm the product name or scan a product before searching.");
+      return;
     }
-
-    setLoading(true)
-    setError("")
-    setSearchAttempted(true)
-
+  
+    setLoading(true);
+    setError("");
+    setSearchAttempted(true);
+  
     // Try with confirmed product name first
     if (confirmedProductName.trim()) {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/api/product", {
-          params: { name: confirmedProductName },
-        })
+        const response = await axios.get("http://127.0.0.1:5010/api/products", {
+          params: { name: confirmedProductName },  // ✅ Using query param
+        });
         if (response.data.products && response.data.products.length > 0) {
-          setProductData(response.data.products[0])
-          fetchReviews(response.data.products[0].product_name)
-          setLoading(false)
-          return
+          setProductData(response.data.products[0]);
+          fetchReviews(response.data.products[0].name); // or .product_name if needed
+          setLoading(false);
+          return;
         }
       } catch (err) {
-        console.error("Error searching by confirmed name:", err)
-        // Continue to try with scanned text
+        console.error("Error searching by confirmed name:", err);
       }
     }
-
+  
     // If confirmed name search failed or wasn't attempted, try with scanned text
     if (scannedText.trim()) {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/api/product", {
-          params: { name: scannedText },
-        })
+        const response = await axios.get("http://127.0.0.1:5010/api/products", {
+          params: { name: scannedText },  // ✅ Using query param
+        });
         if (response.data.products && response.data.products.length > 0) {
-          setProductData(response.data.products[0])
-          fetchReviews(response.data.products[0].product_name)
-          setLoading(false)
-          return
+          setProductData(response.data.products[0]);
+          fetchReviews(response.data.products[0].name);
+          setLoading(false);
+          return;
         }
       } catch (err) {
-        console.error("Error searching by scanned text:", err)
+        console.error("Error searching by scanned text:", err);
       }
     }
-
+  
     // If both searches failed
-    setError("Product not found. Please try a different name or scan again.")
-    setProductData(null)
-    setLoading(false)
-  }
-
+    setError("Product not found. Please try a different name or scan again.");
+    setProductData(null);
+    setLoading(false);
+  };
+  
+  
   const capture = async () => {
     if (mode === "scan" && webcamRef.current && isCameraOn) {
       const imageSrc = webcamRef.current.getScreenshot()
@@ -271,7 +272,17 @@ const ProductScan = () => {
       setLoading(false)
     }
   }
-
+  const mapNutriScoreToGrade = (score) => {
+    const map = {
+      "1": "A",
+      "2": "B",
+      "3": "C",
+      "4": "D",
+      "5": "E",
+    };
+    return map[score?.toString()] || "N/A";
+  };
+  
   const getStyle = (scoreType, grade) => {
     const styles = {
       ecoScore: {
@@ -385,7 +396,7 @@ const ProductScan = () => {
   }
 
   return (
-    <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
+    <Paper elevation={3} style={{ padding: "20px", margin: "20px", color: "#2f524d" }}>
       <Typography variant="h4" gutterBottom align="center" color="#2f524d" fontWeight={600}>
         Product Analysis
       </Typography>
@@ -501,35 +512,30 @@ const ProductScan = () => {
       {/* Product data display */}
       {productData && (
         <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Typography align="left" variant="h5" marginTop={6}>
-              <strong>Product:</strong> {productData.product_name || "N/A"}
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <div style={{ display: "flex", flexDirection: "column", justifyItems: "space-between" }}>
-              <ScoreCard
-                title="Nutri-Score"
-                grade={productData.nutri_score}
-                style={getStyle("nutriScore", productData.nutri_score)}
-              />
-              <Card style={{ padding: "20px", height: "200px" }}>
-                <Typography variant="h6" style={{ marginBottom: "8px" }}>
-                  Nutrient Levels<br></br>
-                </Typography>
-                <Grid container spacing={4}>
-                  {Object.entries(productData.nutritional_values || {}).map(([key, value]) => (
-                    <Grid item xs={6} md={3} key={key}>
-                      <Typography style={{ marginTop: "15px" }}>
-                        <strong>{key.replace(/_/g, " ")}:</strong> {value || "N/A"}
-                      </Typography>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Card>
-            </div>
-          </Grid>
+        <Grid item xs={12}>
+          <Typography align="left" variant="h5" marginTop={6}>
+            <strong>Product:</strong> {productData.product_name || productData.name || "N/A"}
+          </Typography>
+        </Grid>
+      
+        {/* Nutri-Score and Health Class */}
+        <Grid item xs={12} md={6}>
+          <div style={{ display: "flex", flexDirection: "column", justifyItems: "space-between", gap: "20px" }}>
+          <ScoreCard
+            title="Nutri-Score"
+            grade={mapNutriScoreToGrade(productData.calculated_nutriscore)}
+            style={getStyle("nutriScore", mapNutriScoreToGrade(productData.calculated_nutriscore))}
+          />
+      
+            <Card style={{ padding: "20px", height: "100px" }}>
+              <Typography variant="h6">Health Class</Typography>
+              <Typography variant="body1" style={{ marginTop: "10px" }}>
+                {productData.health_class || "N/A"}
+              </Typography>
+            </Card>
+          </div>
+        </Grid>
+      
 
           {/* Reviews section */}
           <Grid item xs={12} md={6}>
@@ -610,27 +616,32 @@ const ProductScan = () => {
           <Grid item xs={12}>
             <Fade in={true} timeout={1000}>
               <div>
-                <NutritionalQualityCard nutriScore={productData.nutri_score} getMessage={getNutriScoreMessage} />
+                <NutritionalQualityCard
+                  nutriScore={mapNutriScoreToGrade(productData.calculated_nutriscore)}
+                  getMessage={getNutriScoreMessage}
+                />
               </div>
             </Fade>
           </Grid>
 
+
           {productData.low_nutrient_warnings && productData.low_nutrient_warnings.length > 0 && (
-            <Grid item xs={12}>
-              <Card style={{ padding: "20px" }}>
-                <Typography align="left" variant="h6" style={{ marginBottom: "1rem" }}>
-                  Low Nutrient Warnings
-                </Typography>
-                <List>
-                  {productData.low_nutrient_warnings.map((warning, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={warning} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Card>
-            </Grid>
-          )}
+              <Grid item xs={12}>
+                <Card style={{ padding: "20px" }}>
+                  <Typography align="left" variant="h6" style={{ marginBottom: "1rem", color: "black" }}>
+                    Low Nutrient Warnings
+                  </Typography>
+                  <List>
+                    {productData.low_nutrient_warnings.map((warning, index) => (
+                      <ListItem key={index}>
+                        <ListItemText primary={<span style={{ color: "black" }}>{warning}</span>} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Card>
+              </Grid>
+            )}
+
 
           <Grid item xs={12}>
             <Fade in={true} timeout={1000}>

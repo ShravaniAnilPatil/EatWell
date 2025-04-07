@@ -58,7 +58,7 @@ const SwipeCards = () => {
           >
             <h2>{card.title}</h2>
             <p>{card.description}</p>
-            <button style={{ width: 120, height: 40, margin: 20 , borderRadius: 10,  backgroundColor: "#fff", color: "#000", fontSize: 16, fontWeight: "bold" }} onClick={(e) => {
+            <button style={{ width: 140, height: 40, margin: 20 , borderRadius: 10,  backgroundColor: "#fff", color: "#000", fontSize: 14, fontWeight: "bold" }} onClick={(e) => {
                 e.stopPropagation(); // Prevent parent div click event
                 navigate(card.path); // Navigate to the specified path
               }}>{card.buttonText}</button>

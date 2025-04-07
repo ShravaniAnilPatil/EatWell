@@ -138,13 +138,13 @@ for page_num in range(21, total_pages + 1):
                 try:
                     with open("worldchocolates.csv", "r", encoding="utf-8") as csv_file:
                         reader = csv.DictReader(csv_file)
-                        scraped_data = list(reader)  # Convert CSV reader object to a list of dictionaries
+                        chocolates = list(reader)  # Convert CSV reader object to a list of dictionaries
                 except Exception as e:
                     print(f"Error reading CSV file: {e}. Resetting data.")
-                    scraped_data = []  # Reset data if there's an issue
+                    chocolates = []  # Reset data if there's an issue
 
             # Append the new entry
-            scraped_data.append(new_entry)
+            chocolates.append(new_entry)
 
             # Save back to CSV
             with open("worldchocolates.csv", "w", encoding="utf-8", newline="") as csv_file:
@@ -152,7 +152,7 @@ for page_num in range(21, total_pages + 1):
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
                 writer.writeheader()  # Write column headers
-                writer.writerows(scraped_data)  # Write all data
+                writer.writerows(chocolates)  # Write all data
 
 
     except Exception as e:
