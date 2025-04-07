@@ -3,8 +3,8 @@ import json
 
 # Load CSV in chunks to handle large files efficiently
 chunksize = 100000  # Adjust based on memory capacity
-csv_file = "../model/dataset1.csv"  # Update with your file path
-json_file = "products.json"
+csv_file = "../dataset/preprocessed_dataset.csv"  # Update with your file path
+json_file = "final.json"
 
 # Convert CSV to JSON in chunks and write to a file
 with open(json_file, "w", encoding="utf-8") as f:

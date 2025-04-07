@@ -23,8 +23,8 @@ chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-base_url = "https://in.openfoodfacts.org/cgi/search.pl?action=process&search_terms=chocolates&sort_by=unique_scans_n&page_size=50&page="
-total_pages = 10
+base_url = "https://world.openfoodfacts.org/cgi/search.pl?action=process&search_terms=chocolate&sort_by=unique_scans_n&page_size=50&page="
+total_pages = 100
 
 for page_num in range(1, total_pages + 1):
 
@@ -132,26 +132,26 @@ for page_num in range(1, total_pages + 1):
     }
 
             # Read existing data from CSV if it exists
-            scraped_data = []
-            if os.path.exists("scraped_data.csv"):
+            chocolates = []
+            if os.path.exists("chocolates.csv"):
                 try:
-                    with open("scraped_data.csv", "r", encoding="utf-8") as csv_file:
+                    with open("chocolates.csv", "r", encoding="utf-8") as csv_file:
                         reader = csv.DictReader(csv_file)
-                        scraped_data = list(reader)  # Convert CSV reader object to a list of dictionaries
+                        chocolates = list(reader)  # Convert CSV reader object to a list of dictionaries
                 except Exception as e:
                     print(f"Error reading CSV file: {e}. Resetting data.")
-                    scraped_data = []  # Reset data if there's an issue
+                    chocolates = []  # Reset data if there's an issue
 
             # Append the new entry
-            scraped_data.append(new_entry)
+            chocolates.append(new_entry)
 
             # Save back to CSV
-            with open("scraped_data.csv", "w", encoding="utf-8", newline="") as csv_file:
+            with open("chocolates.csv", "w", encoding="utf-8", newline="") as csv_file:
                 fieldnames = ["name","category","Protein","Carbohydrates","Sugar","Fat","Fiber","Sodium","nutrient_grade", "allergen"]
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
                 writer.writeheader()  # Write column headers
-                writer.writerows(scraped_data)  # Write all data
+                writer.writerows(chocolates)  # Write all data
 
 
     except Exception as e:
