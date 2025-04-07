@@ -7,6 +7,7 @@ import { Bar } from "react-chartjs-2"
 import "chart.js/auto"
 import AlternativeProducts from "../components/altrecommend"
 import "../styles/details.css"
+import PredictForm from "../components/predict"
 import {
   Grid,
   Typography,
@@ -69,6 +70,9 @@ const ProductScan = () => {
     }
   }, [user])
 
+
+
+  
   const fetchUserData = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/user/profile/${user}`)
@@ -519,26 +523,60 @@ const ProductScan = () => {
         </Grid>
       
         {/* Nutri-Score and Health Class */}
-        <Grid item xs={12} md={6}>
-          <div style={{ display: "flex", flexDirection: "column", justifyItems: "space-between", gap: "20px" }}>
-          <ScoreCard
-            title="Nutri-Score"
-            grade={mapNutriScoreToGrade(productData.calculated_nutriscore)}
-            style={getStyle("nutriScore", mapNutriScoreToGrade(productData.calculated_nutriscore))}
-          />
-      
-            <Card style={{ padding: "20px", height: "100px" }}>
-              <Typography variant="h6">Health Class</Typography>
-              <Typography variant="body1" style={{ marginTop: "10px" }}>
-                {productData.health_class || "N/A"}
-              </Typography>
-            </Card>
-          </div>
-        </Grid>
-      
+  <Grid item xs={12} >
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" , color: "#2f524d"}}>
+    <ScoreCard
+  title="Nutri-Score"
+  grade={mapNutriScoreToGrade(productData.calculated_nutriscore)}
+  style={getStyle("nutriScore", mapNutriScoreToGrade(productData.calculated_nutriscore))}
+/>
+
+
+      <Card style={{ padding: "20px", height: "100px" }}>
+        <Typography variant="h6">Health Class</Typography>
+        <Typography variant="body1" style={{ marginTop: "10px" }}>
+          {productData.health_class || "N/A"}
+        </Typography>
+      </Card>
+    </div>
+  </Grid>
+
+  
+  <Grid item xs={12}>
+            <Fade in={true} timeout={1000}>
+              <div>
+                <NutritionalQualityCard
+                  nutriScore={mapNutriScoreToGrade(productData.calculated_nutriscore)}
+                  getMessage={getNutriScoreMessage}
+                />
+              </div>
+            </Fade>
+          </Grid>
+
+
+          {productData.low_nutrient_warnings && productData.low_nutrient_warnings.length > 0 && (
+              <Grid item xs={12}>
+                <Card style={{ padding: "20px" }}>
+                  <Typography align="left" variant="h6" style={{ marginBottom: "1rem", color: "black" }}>
+                    Low Nutrient Warnings
+                  </Typography>
+                  <List>
+                    {productData.low_nutrient_warnings.map((warning, index) => (
+                      <ListItem key={index}>
+                        <ListItemText primary={<span style={{ color: "black" }}>{warning}</span>} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Card>
+              </Grid>
+            )}
+            
+  
+  <PredictForm prefillData={productData} />
+
 
           {/* Reviews section */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
             <Card style={{ padding: "20px", height: "100%", display: "flex", flexDirection: "column" }}>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h6" fontWeight="bold">
@@ -613,16 +651,7 @@ const ProductScan = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12}>
-            <Fade in={true} timeout={1000}>
-              <div>
-                <NutritionalQualityCard
-                  nutriScore={mapNutriScoreToGrade(productData.calculated_nutriscore)}
-                  getMessage={getNutriScoreMessage}
-                />
-              </div>
-            </Fade>
-          </Grid>
+          
 
 
           {productData.low_nutrient_warnings && productData.low_nutrient_warnings.length > 0 && (

@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 
 const makePrediction = async (inputData, modelName = "lightgbm") => {
   try {
-    const response = await axios.post("http://localhost:5005/api/predict", {
+    const response = await axios.post("http://localhost:5007/api/predict", {
       ...inputData,
       model_name: modelName,
     })
@@ -14,9 +14,7 @@ const makePrediction = async (inputData, modelName = "lightgbm") => {
   }
 }
 
-const PredictForm = () => {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+const PredictForm = ({ prefillData }) => {
   const [formData, setFormData] = useState({
     Protein: 0,
     Fat: 0,
@@ -26,7 +24,22 @@ const PredictForm = () => {
     Sugar: 0,
   })
   const [modelName, setModelName] = useState("lightgbm")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
   const [results, setResults] = useState(null)
+
+  useEffect(() => {
+    if (prefillData) {
+      setFormData({
+        Protein: prefillData.Protein || 0,
+        Fat: prefillData.Fat || 0,
+        Sodium: prefillData.Sodium || 0,
+        Carbohydrates: prefillData.Carbohydrates || 0,
+        Fiber: prefillData.Fiber || 0,
+        Sugar: prefillData.Sugar || 0,
+      })
+    }
+  }, [prefillData])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -63,35 +76,296 @@ const PredictForm = () => {
   }
 
   const getProbClass = (probability) => {
-    if (probability > 0.7) return "bg-success"
-    if (probability > 0.4) return "bg-warning"
-    return "bg-danger"
+    if (probability > 0.7) return { backgroundColor: "#28a745" } // success
+    if (probability > 0.4) return { backgroundColor: "#ffc107" } // warning
+    return { backgroundColor: "#dc3545" } // danger
+  }
+
+  const styles = {
+    container: {
+      padding: "1rem 0.5rem",
+      marginTop: "1rem",
+      width: "100%",
+      boxSizing: "border-box",
+    },
+    row: {
+      display: "flex",
+      flexWrap: "wrap",
+      width: "100%",
+    },
+    column: {
+      flex: "0 0 100%",
+      maxWidth: "100%",
+      padding: "0 0.5rem",
+      position: "relative",
+      width: "100%",
+    },
+    card: {
+      position: "relative",
+      display: "flex",
+      flexDirection: "column",
+      minWidth: "0",
+      wordWrap: "break-word",
+      backgroundColor: "#fff",
+      backgroundClip: "border-box",
+      border: "0",
+      borderRadius: "0.25rem",
+      boxShadow: "0 0.125rem 0.25rem rgba(0, 0, 0, 0.075)",
+      marginBottom: "0.75rem",
+    },
+    cardHeader: {
+      padding: "0.5rem 1rem",
+      marginBottom: "0",
+      backgroundColor: "#2f524d",
+      color: "#fff",
+      borderTopLeftRadius: "0.25rem",
+      borderTopRightRadius: "0.25rem",
+    },
+    cardHeaderSuccess: {
+      backgroundColor: "#2f524d",
+      color: "#fff",
+    },
+    cardTitle: {
+      fontSize: "1.1rem",
+      fontWeight: "700",
+      margin: "0",
+    },
+    cardBody: {
+      flex: "1 1 auto",
+      padding: "0.75rem 1rem",
+    },
+    formRow: {
+      display: "flex",
+      flexWrap: "wrap",
+      width: "100%",
+      marginBottom: "0.75rem",
+    },
+    formColumn: {
+      flex: "1",
+      padding: "0 0.5rem",
+      position: "relative",
+      minWidth: "150px",
+    },
+    formColumnSelect: {
+      flex: "0 0 250px",
+      padding: "0 0.5rem",
+    },
+    formLabel: {
+      display: "inline-block",
+      marginBottom: "0.25rem",
+      fontWeight: "600",
+      fontSize: "0.9rem",
+    },
+    formControl: {
+      display: "block",
+      width: "100%",
+      padding: "0.25rem 0.5rem",
+      fontSize: "0.9rem",
+      lineHeight: "1.5",
+      color: "#495057",
+      backgroundColor: "#fff",
+      backgroundClip: "padding-box",
+      border: "1px solid #ced4da",
+      borderRadius: "0.25rem",
+      transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
+      height: "2.5rem",
+    },
+    formSelect: {
+      display: "block",
+      width: "100%",
+      padding: "0.25rem 0.5rem",
+      fontSize: "0.9rem",
+      lineHeight: "1.5",
+      color: "#2f524d",
+      backgroundColor: "#fff",
+      backgroundClip: "padding-box",
+      border: "1px solid #ced4da",
+      borderRadius: "0.25rem",
+      boxShadow: "0 0.125rem 0.25rem rgba(0, 0, 0, 0.075)",
+      appearance: "none",
+      height: "2.5rem",
+    },
+    button: {
+      display: "inline-block",
+      fontWeight: "600",
+      textAlign: "center",
+      whiteSpace: "nowrap",
+      verticalAlign: "middle",
+      userSelect: "none",
+      border: "1px solid transparent",
+      padding: "0.375rem 0.75rem",
+      fontSize: "1rem",
+      lineHeight: "1.5",
+      borderRadius: "0.25rem",
+      transition: "color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
+      color: "#fff",
+      backgroundColor: "#2f524d",
+      borderColor: "#2f524d",
+      width: "100%",
+      cursor: "pointer",
+    },
+    buttonDisabled: {
+      opacity: "0.65",
+      pointerEvents: "none",
+    },
+    alert: {
+      position: "relative",
+      padding: "0.5rem 0.75rem",
+      marginBottom: "0.75rem",
+      border: "1px solid transparent",
+      borderRadius: "0.25rem",
+      display: "flex",
+      alignItems: "center",
+      fontSize: "0.9rem",
+    },
+    alertDanger: {
+      color: "#721c24",
+      backgroundColor: "#f8d7da",
+      borderColor: "#f5c6cb",
+    },
+    alertInfo: {
+      color: "#0c5460",
+      backgroundColor: "#d1ecf1",
+      borderColor: "#bee5eb",
+    },
+    spinner: {
+      display: "inline-block",
+      width: "1rem",
+      height: "1rem",
+      verticalAlign: "text-bottom",
+      border: "0.25em solid currentColor",
+      borderRightColor: "transparent",
+      borderRadius: "50%",
+      animation: "spinner-border 0.75s linear infinite",
+      marginRight: "0.5rem",
+    },
+    cardLight: {
+      backgroundColor: "#f8f9fa",
+      border: "0",
+      padding: "0.75rem",
+      marginBottom: "0.75rem",
+    },
+    cardTitleBordered: {
+      borderBottom: "1px solid #dee2e6",
+      paddingBottom: "0.25rem",
+      marginBottom: "0.5rem",
+      fontSize: "1rem",
+      fontWeight: "500",
+    },
+    progress: {
+      display: "flex",
+      height: "8px",
+      overflow: "hidden",
+      fontSize: "0.75rem",
+      backgroundColor: "#e9ecef",
+      borderRadius: "0.25rem",
+    },
+    progressBar: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      overflow: "hidden",
+      color: "#fff",
+      textAlign: "center",
+      whiteSpace: "nowrap",
+      transition: "width 0.6s ease",
+    },
+    badge: {
+      display: "inline-block",
+      padding: "0.2em 0.4em",
+      fontSize: "75%",
+      fontWeight: "700",
+      lineHeight: "1",
+      textAlign: "center",
+      whiteSpace: "nowrap",
+      verticalAlign: "baseline",
+      borderRadius: "0.25rem",
+      color: "#fff",
+      backgroundColor: "#6c757d",
+    },
+    table: {
+      width: "100%",
+      marginBottom: "0.75rem",
+      color: "#212529",
+      borderCollapse: "collapse",
+      fontSize: "0.9rem",
+    },
+    tableResponsive: {
+      display: "block",
+      width: "100%",
+      overflowX: "auto",
+    },
+    tableHead: {
+      backgroundColor: "#f8f9fa",
+    },
+    tableCell: {
+      padding: "0.5rem",
+      verticalAlign: "top",
+      borderTop: "1px solid #dee2e6",
+    },
+    flexBetween: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "0.25rem",
+    },
+    flexEnd: {
+      display: "flex",
+      justifyContent: "flex-end",
+      marginTop: "0.75rem",
+    },
+    outlineButton: {
+      color: "#0d6efd",
+      backgroundColor: "transparent",
+      backgroundImage: "none",
+      borderColor: "#0d6efd",
+      display: "flex",
+      alignItems: "center",
+      padding: "0.25rem 0.5rem",
+      fontSize: "0.875rem",
+    },
+    icon: {
+      marginRight: "0.5rem",
+    },
+    fadeIn: {
+      animation: "fadeIn 0.5s",
+    },
+    formGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+      gap: "0.75rem",
+      width: "100%",
+    },
+    "@keyframes fadeIn": {
+      "0%": { opacity: 0 },
+      "100%": { opacity: 1 },
+    },
+    "@keyframes spinner-border": {
+      to: { transform: "rotate(360deg)" },
+    },
   }
 
   return (
-    <div className="container py-4 mt-5">
-      {" "}
-      {/* Added mt-5 to account for navbar */}
-      <div className="row justify-content-center">
-        <div className="col-lg-10">
-          <div className="card shadow-sm mb-4 border-0 rounded-3">
-            <div className="card-header bg-primary text-white py-3 rounded-top">
-              <h2 className="h4 mb-0 fw-bold">Food Nutritional Analysis</h2>
+    <div style={styles.container}>
+      <div style={styles.row}>
+        <div style={styles.column}>
+          <div style={styles.card}>
+            <div style={styles.cardHeader}>
+              <h2 style={styles.cardTitle}>Food Nutritional Analysis</h2>
             </div>
-            <div className="card-body p-4">
+            <div style={styles.cardBody}>
               {error && (
-                <div className="alert alert-danger d-flex align-items-center" role="alert">
-                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                <div style={{...styles.alert, ...styles.alertDanger}}>
+                  <span style={styles.icon}>⚠️</span>
                   <div>{error}</div>
                 </div>
               )}
 
               <form onSubmit={handleSubmit}>
-                <div className="row mb-4">
-                  <div className="col-md-4">
-                    <label className="form-label fw-semibold">Select Model</label>
+                <div style={styles.formRow}>
+                  <div style={styles.formColumnSelect}>
+                    <label style={styles.formLabel}>Select Model</label>
                     <select
-                      className="form-select form-select-lg shadow-sm"
+                      style={styles.formSelect}
                       value={modelName}
                       onChange={handleModelChange}
                     >
@@ -101,110 +375,90 @@ const PredictForm = () => {
                   </div>
                 </div>
 
-                <div className="row g-4 mb-4">
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="form-control"
-                        id="protein"
-                        name="Protein"
-                        value={formData.Protein}
-                        onChange={handleChange}
-                        placeholder="Protein"
-                      />
-                      <label htmlFor="protein">Protein (g)</label>
-                    </div>
+                <div style={styles.formGrid}>
+                  <div>
+                    <label style={styles.formLabel} htmlFor="protein">Protein (g)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      style={styles.formControl}
+                      id="protein"
+                      name="Protein"
+                      value={formData.Protein}
+                      onChange={handleChange}
+                    />
                   </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="form-control"
-                        id="carbs"
-                        name="Carbohydrates"
-                        value={formData.Carbohydrates}
-                        onChange={handleChange}
-                        placeholder="Carbohydrates"
-                      />
-                      <label htmlFor="carbs">Carbohydrates (g)</label>
-                    </div>
+                  <div>
+                    <label style={styles.formLabel} htmlFor="carbs">Carbohydrates (g)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      style={styles.formControl}
+                      id="carbs"
+                      name="Carbohydrates"
+                      value={formData.Carbohydrates}
+                      onChange={handleChange}
+                    />
                   </div>
-                </div>
-
-                <div className="row g-4 mb-4">
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="form-control"
-                        id="fat"
-                        name="Fat"
-                        value={formData.Fat}
-                        onChange={handleChange}
-                        placeholder="Fat"
-                      />
-                      <label htmlFor="fat">Fat (g)</label>
-                    </div>
+                  <div>
+                    <label style={styles.formLabel} htmlFor="fat">Fat (g)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      style={styles.formControl}
+                      id="fat"
+                      name="Fat"
+                      value={formData.Fat}
+                      onChange={handleChange}
+                    />
                   </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="form-control"
-                        id="sugar"
-                        name="Sugar"
-                        value={formData.Sugar}
-                        onChange={handleChange}
-                        placeholder="Sugar"
-                      />
-                      <label htmlFor="sugar">Sugar (g)</label>
-                    </div>
+                  <div>
+                    <label style={styles.formLabel} htmlFor="sugar">Sugar (g)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      style={styles.formControl}
+                      id="sugar"
+                      name="Sugar"
+                      value={formData.Sugar}
+                      onChange={handleChange}
+                    />
                   </div>
-                </div>
-
-                <div className="row g-4 mb-4">
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="form-control"
-                        id="fiber"
-                        name="Fiber"
-                        value={formData.Fiber}
-                        onChange={handleChange}
-                        placeholder="Fiber"
-                      />
-                      <label htmlFor="fiber">Fiber (g)</label>
-                    </div>
+                  <div>
+                    <label style={styles.formLabel} htmlFor="fiber">Fiber (g)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      style={styles.formControl}
+                      id="fiber"
+                      name="Fiber"
+                      value={formData.Fiber}
+                      onChange={handleChange}
+                    />
                   </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="number"
-                        step="0.1"
-                        className="form-control"
-                        id="sodium"
-                        name="Sodium"
-                        value={formData.Sodium}
-                        onChange={handleChange}
-                        placeholder="Sodium"
-                      />
-                      <label htmlFor="sodium">Sodium (mg)</label>
-                    </div>
+                  <div>
+                    <label style={styles.formLabel} htmlFor="sodium">Sodium (mg)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      style={styles.formControl}
+                      id="sodium"
+                      name="Sodium"
+                      value={formData.Sodium}
+                      onChange={handleChange}
+                    />
                   </div>
                 </div>
 
-                <div className="d-grid mt-4">
-                  <button type="submit" className="btn btn-primary btn-lg py-3 fw-bold" disabled={loading}>
+                <div style={{ marginTop: "0.75rem" }}>
+                  <button 
+                    type="submit" 
+                    style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button} 
+                    disabled={loading}
+                  >
                     {loading ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span style={styles.spinner} role="status" aria-hidden="true"></span>
                         Processing...
                       </>
                     ) : (
@@ -217,60 +471,65 @@ const PredictForm = () => {
           </div>
 
           {results && (
-            <div className="card shadow border-0 rounded-3 mb-5 animate__animated animate__fadeIn">
-              <div className="card-header bg-success text-white py-3 rounded-top">
-                <h3 className="h5 mb-0 fw-bold">Prediction Results</h3>
+            <div style={{...styles.card, ...styles.fadeIn}}>
+              <div style={{...styles.cardHeader, ...styles.cardHeaderSuccess}}>
+                <h3 style={styles.cardTitle}>Prediction Results</h3>
               </div>
-              <div className="card-body p-4">
-                <div className="alert alert-info d-flex align-items-center">
-                  <div className="me-3">
-                    <i className="bi bi-info-circle-fill fs-3"></i>
+              <div style={styles.cardBody}>
+                <div style={{...styles.alert, ...styles.alertInfo}}>
+                  <div style={{ marginRight: "0.5rem" }}>
+                    <span style={{ fontSize: "1.2rem" }}>ℹ️</span>
                   </div>
                   <div>
-                    <h4 className="alert-heading">
+                    <h4 style={{ margin: "0 0 0.25rem 0", fontSize: "1rem" }}>
                       Predicted Class: <strong>{results.prediction}</strong>
                     </h4>
-                    <p className="mb-0">Using {results.modelName.toUpperCase()} model</p>
+                    <p style={{ margin: 0, fontSize: "0.9rem" }}>Using {results.modelName.toUpperCase()} model</p>
                   </div>
                 </div>
 
-                <div className="card bg-light border-0 p-3 mb-4">
-                  <h5 className="card-title border-bottom pb-2 mb-3">Class Probabilities</h5>
-                  {Object.entries(results.probabilities).map(([className, prob]) => (
-                    <div key={className} className="mb-3">
-                      <div className="d-flex justify-content-between mb-1">
-                        <span className="fw-semibold">{className}</span>
-                        <span className="badge bg-secondary">{(prob * 100).toFixed(2)}%</span>
+                <div style={styles.cardLight}>
+                  <h5 style={styles.cardTitleBordered}>Class Probabilities</h5>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
+                    {Object.entries(results.probabilities).map(([className, prob]) => (
+                      <div key={className}>
+                        <div style={styles.flexBetween}>
+                          <span style={{ fontWeight: "600", fontSize: "0.9rem" }}>{className}</span>
+                          <span style={styles.badge}>{(prob * 100).toFixed(2)}%</span>
+                        </div>
+                        <div style={styles.progress}>
+                          <div
+                            style={{
+                              ...styles.progressBar,
+                              ...getProbClass(prob),
+                              width: `${prob * 100}%`
+                            }}
+                            role="progressbar"
+                            aria-valuenow={prob * 100}
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          ></div>
+                        </div>
                       </div>
-                      <div className="progress" style={{ height: "10px" }}>
-                        <div
-                          className={`progress-bar ${getProbClass(prob)}`}
-                          style={{ width: `${prob * 100}%` }}
-                          role="progressbar"
-                          aria-valuenow={prob * 100}
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
-                <div className="card bg-light border-0 p-3">
-                  <h5 className="card-title border-bottom pb-2 mb-3">Input Summary</h5>
-                  <div className="table-responsive">
-                    <table className="table table-hover">
-                      <thead className="table-light">
+                <div style={{...styles.cardLight, marginTop: "0.75rem"}}>
+                  <h5 style={styles.cardTitleBordered}>Input Summary</h5>
+                  <div style={styles.tableResponsive}>
+                    <table style={styles.table}>
+                      <thead style={styles.tableHead}>
                         <tr>
-                          <th>Nutrient</th>
-                          <th>Value</th>
+                          <th style={styles.tableCell}>Nutrient</th>
+                          <th style={styles.tableCell}>Value</th>
                         </tr>
                       </thead>
                       <tbody>
                         {Object.entries(results.inputData).map(([feature, value]) => (
                           <tr key={feature}>
-                            <td>{feature}</td>
-                            <td>
+                            <td style={styles.tableCell}>{feature}</td>
+                            <td style={styles.tableCell}>
                               {value} {feature === "Sodium" ? "mg" : "g"}
                             </td>
                           </tr>
@@ -280,9 +539,12 @@ const PredictForm = () => {
                   </div>
                 </div>
 
-                <div className="d-flex justify-content-end mt-4">
-                  <button onClick={() => window.print()} className="btn btn-outline-primary d-flex align-items-center">
-                    <i className="bi bi-printer me-2"></i>
+                <div style={styles.flexEnd}>
+                  <button 
+                    onClick={() => window.print()} 
+                    style={{...styles.button, ...styles.outlineButton}}
+                  >
+                    <span style={styles.icon}>🖨️</span>
                     Print Results
                   </button>
                 </div>
@@ -296,4 +558,3 @@ const PredictForm = () => {
 }
 
 export default PredictForm
-
