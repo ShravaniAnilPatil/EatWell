@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import os
 from datetime import datetime
-
+import time
 
 load_dotenv()
 
@@ -23,20 +23,21 @@ chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-base_url = "https://in.openfoodfacts.org/cgi/search.pl?action=process&search_terms=chocolates&sort_by=unique_scans_n&page_size=50&page="
-total_pages = 10
+base_url = "https://world.openfoodfacts.org/cgi/search.pl?action=process&search_terms=chocolates&sort_by=unique_scans_n&page_size=50&page="
+total_pages = 24
 
-for page_num in range(1, total_pages + 1):
+for page_num in range(21, total_pages + 1):
 
     url = f"{base_url}{page_num}"
     print(f"Scraping URL: {url}")
     link=[]
     allergen=""
     try:
+        time.sleep(5)
         driver.get(url)
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'body')))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        box = soup.find("ul", class_="search_results small-block-grid-1 medium-block-grid-4 large-block-grid-6 xlarge-block-grid-8 xxlarge-block-grid-10")
+        box = soup.find("ul", class_="search_results small-block-grid-1 medium-block-grid-4 large-block-grid-5 xlarge-block-grid-8 xxlarge-block-grid-10")
         links=box.find_all("a",class_="list_product_a")
         
         
@@ -133,9 +134,9 @@ for page_num in range(1, total_pages + 1):
 
             # Read existing data from CSV if it exists
             scraped_data = []
-            if os.path.exists("scraped_data.csv"):
+            if os.path.exists("worldchocolates.csv"):
                 try:
-                    with open("scraped_data.csv", "r", encoding="utf-8") as csv_file:
+                    with open("worldchocolates.csv", "r", encoding="utf-8") as csv_file:
                         reader = csv.DictReader(csv_file)
                         scraped_data = list(reader)  # Convert CSV reader object to a list of dictionaries
                 except Exception as e:
@@ -146,7 +147,7 @@ for page_num in range(1, total_pages + 1):
             scraped_data.append(new_entry)
 
             # Save back to CSV
-            with open("scraped_data.csv", "w", encoding="utf-8", newline="") as csv_file:
+            with open("worldchocolates.csv", "w", encoding="utf-8", newline="") as csv_file:
                 fieldnames = ["name","category","Protein","Carbohydrates","Sugar","Fat","Fiber","Sodium","nutrient_grade", "allergen"]
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
