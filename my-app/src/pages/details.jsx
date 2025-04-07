@@ -5,6 +5,7 @@ import axios from "axios"
 import Webcam from "react-webcam"
 import { Bar } from "react-chartjs-2"
 import "chart.js/auto"
+import AlternativeProducts from "../components/altrecommend"
 import "../styles/details.css"
 import {
   Grid,
