@@ -162,7 +162,7 @@ const ProductScan = () => {
     // Try with confirmed product name first
     if (confirmedProductName.trim()) {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/api/products", {
+        const response = await axios.get("http://127.0.0.1:5010/api/products", {
           params: { name: confirmedProductName },  // ✅ Using query param
         });
         if (response.data.products && response.data.products.length > 0) {
@@ -179,7 +179,7 @@ const ProductScan = () => {
     // If confirmed name search failed or wasn't attempted, try with scanned text
     if (scannedText.trim()) {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/api/products", {
+        const response = await axios.get("http://127.0.0.1:5010/api/products", {
           params: { name: scannedText },  // ✅ Using query param
         });
         if (response.data.products && response.data.products.length > 0) {
