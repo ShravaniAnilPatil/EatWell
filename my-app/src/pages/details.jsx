@@ -5,7 +5,6 @@ import axios from "axios"
 import Webcam from "react-webcam"
 import { Bar } from "react-chartjs-2"
 import "chart.js/auto"
-import AlternativeProducts from "../components/altrecommend"
 import "../styles/details.css"
 import PredictForm from "../components/predict"
 import {
@@ -15,7 +14,7 @@ import {
   Button,
   Paper,
   CircularProgress,
-  IconButton, 
+  IconButton,
   Card,
   Dialog,
   DialogTitle,
@@ -52,6 +51,7 @@ const ProductScan = () => {
   const [isCameraOn, setIsCameraOn] = useState(false)
   const [openSpeechDialog, setOpenSpeechDialog] = useState(false)
   const [searchAttempted, setSearchAttempted] = useState(false)
+  const [processedNutritionalData, setProcessedNutritionalData] = useState(null)
 
   // Review system state variables
   const [reviews, setReviews] = useState([])
@@ -70,9 +70,32 @@ const ProductScan = () => {
     }
   }, [user])
 
+  // Process product data when it changes
+  useEffect(() => {
+    if (productData) {
+      processProductData(productData)
+    }
+  }, [productData])
 
+  // Function to process and normalize product data
+  const processProductData = (data) => {
+    console.log("Processing product data:", data)
 
-  
+    // Create a normalized structure for the nutritional data
+    // Based on the dataset structure, these values are directly in the root object
+    const processedData = {
+      Protein: Number.parseFloat(data.Protein || 0),
+      Fat: Number.parseFloat(data.Fat || 0),
+      Sodium: Number.parseFloat(data.Sodium || 0),
+      Carbohydrates: Number.parseFloat(data.Carbohydrates || 0),
+      Fiber: Number.parseFloat(data.Fiber || 0),
+      Sugar: Number.parseFloat(data.Sugar || 0),
+    }
+
+    console.log("Processed nutritional data:", processedData)
+    setProcessedNutritionalData(processedData)
+  }
+
   const fetchUserData = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/user/profile/${user}`)
@@ -94,6 +117,7 @@ const ProductScan = () => {
     setScannedText("")
     setConfirmedProductName("")
     setProductData(null)
+    setProcessedNutritionalData(null)
     setError("")
     setImagePreview(null)
     setIsCameraOn(false)
@@ -129,7 +153,7 @@ const ProductScan = () => {
       const reviewData = {
         username: newReview.username || "Anonymous",
         text: newReview.text,
-        product_name: productData.product_name,
+        product_name: productData.product_name || productData.name,
         review: newReview.rating.toString(), // Convert rating to string for compatibility
         timestamp: new Date().toISOString(),
       }
@@ -145,7 +169,7 @@ const ProductScan = () => {
       })
 
       // Refresh reviews
-      fetchReviews(productData.product_name)
+      fetchReviews(productData.product_name || productData.name)
     } catch (err) {
       console.error("Error posting review:", err)
       setReviewsError("Failed to post your review. Please try again.")
@@ -155,55 +179,65 @@ const ProductScan = () => {
   // Modified function to search for both scanned text and product name
   const fetchProductData = async () => {
     if (!confirmedProductName.trim() && !scannedText.trim()) {
-      setError("Please confirm the product name or scan a product before searching.");
-      return;
+      setError("Please confirm the product name or scan a product before searching.")
+      return
     }
-  
-    setLoading(true);
-    setError("");
-    setSearchAttempted(true);
-  
+
+    setLoading(true)
+    setError("")
+    setSearchAttempted(true)
+    setProductData(null)
+    setProcessedNutritionalData(null)
+
     // Try with confirmed product name first
     if (confirmedProductName.trim()) {
       try {
-        const response = await axios.get("http://127.0.0.1:5010/api/products", {
-          params: { name: confirmedProductName },  // ✅ Using query param
-        });
+        console.log("Fetching product data for:", confirmedProductName)
+        const response = await axios.get("http://127.0.0.1:5000/api/products", {
+          params: { name: confirmedProductName },
+        })
+
         if (response.data.products && response.data.products.length > 0) {
-          setProductData(response.data.products[0]);
-          fetchReviews(response.data.products[0].name); // or .product_name if needed
-          setLoading(false);
-          return;
+          const product = response.data.products[0]
+          console.log("Product data received:", product)
+          setProductData(product)
+          fetchReviews(product.name || product.product_name)
+          setLoading(false)
+          return
         }
       } catch (err) {
-        console.error("Error searching by confirmed name:", err);
+        console.error("Error searching by confirmed name:", err)
       }
     }
-  
+
     // If confirmed name search failed or wasn't attempted, try with scanned text
     if (scannedText.trim()) {
       try {
-        const response = await axios.get("http://127.0.0.1:5010/api/products", {
-          params: { name: scannedText },  // ✅ Using query param
-        });
+        console.log("Fetching product data for scanned text:", scannedText)
+        const response = await axios.get("http://127.0.0.1:5000/api/products", {
+          params: { name: scannedText },
+        })
+
         if (response.data.products && response.data.products.length > 0) {
-          setProductData(response.data.products[0]);
-          fetchReviews(response.data.products[0].name);
-          setLoading(false);
-          return;
+          const product = response.data.products[0]
+          console.log("Product data received:", product)
+          setProductData(product)
+          fetchReviews(product.name || product.product_name)
+          setLoading(false)
+          return
         }
       } catch (err) {
-        console.error("Error searching by scanned text:", err);
+        console.error("Error searching by scanned text:", err)
       }
     }
-  
+
     // If both searches failed
-    setError("Product not found. Please try a different name or scan again.");
-    setProductData(null);
-    setLoading(false);
-  };
-  
-  
+    setError("Product not found. Please try a different name or scan again.")
+    setProductData(null)
+    setProcessedNutritionalData(null)
+    setLoading(false)
+  }
+
   const capture = async () => {
     if (mode === "scan" && webcamRef.current && isCameraOn) {
       const imageSrc = webcamRef.current.getScreenshot()
@@ -278,15 +312,15 @@ const ProductScan = () => {
   }
   const mapNutriScoreToGrade = (score) => {
     const map = {
-      "1": "A",
-      "2": "B",
-      "3": "C",
-      "4": "D",
-      "5": "E",
-    };
-    return map[score?.toString()] || "N/A";
-  };
-  
+      1: "A",
+      2: "B",
+      3: "C",
+      4: "D",
+      5: "E",
+    }
+    return map[score?.toString()] || "N/A"
+  }
+
   const getStyle = (scoreType, grade) => {
     const styles = {
       ecoScore: {
@@ -313,9 +347,19 @@ const ProductScan = () => {
   }
 
   const renderNutrientChart = () => {
-    if (!productData || !productData.nutritional_values) return null
+    if (!productData) return null
 
-    const significantNutrients = Object.entries(productData.nutritional_values)
+    // Extract nutritional values directly from the product data
+    const nutrientEntries = [
+      ["Protein", productData.Protein],
+      ["Carbohydrates", productData.Carbohydrates],
+      ["Sugar", productData.Sugar],
+      ["Fat", productData.Fat],
+      ["Fiber", productData.Fiber],
+      ["Sodium", productData.Sodium],
+    ]
+
+    const significantNutrients = nutrientEntries
       .filter(([_, value]) => Number.parseFloat(value) > 0.1)
       .sort(([_, a], [__, b]) => Number.parseFloat(b) - Number.parseFloat(a))
       .slice(0, 10)
@@ -343,7 +387,7 @@ const ProductScan = () => {
         },
         title: {
           display: true,
-          text: "Top 10 Nutrients",
+          text: "Top Nutrients",
         },
       },
     }
@@ -393,7 +437,6 @@ const ProductScan = () => {
     </Card>
   )
 
-  // Helper function to format dates
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" }
     return new Date(dateString).toLocaleDateString(undefined, options)
@@ -516,64 +559,64 @@ const ProductScan = () => {
       {/* Product data display */}
       {productData && (
         <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Typography align="left" variant="h5" marginTop={6}>
-            <strong>Product:</strong> {productData.product_name || productData.name || "N/A"}
-          </Typography>
-        </Grid>
-      
-        {/* Nutri-Score and Health Class */}
-  <Grid item xs={12} >
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" , color: "#2f524d"}}>
-    <ScoreCard
-  title="Nutri-Score"
-  grade={mapNutriScoreToGrade(productData.calculated_nutriscore)}
-  style={getStyle("nutriScore", mapNutriScoreToGrade(productData.calculated_nutriscore))}
-/>
+          <Grid item xs={12}>
+            <Typography align="left" variant="h5" marginTop={6}>
+              <strong>Product:</strong> {productData.product_name || productData.name || "N/A"}
+            </Typography>
+          </Grid>
 
+          {/* Nutri-Score and Health Class */}
+          <Grid item xs={12} md={6}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "#2f524d" }}>
+              {/* <ScoreCard
+                title="Nutri-Score"
+                grade={mapNutriScoreToGrade(productData.calculated_nutriscore)}
+                style={getStyle("nutriScore", mapNutriScoreToGrade(productData.calculated_nutriscore))}
+              /> */}
 
-      <Card style={{ padding: "20px", height: "100px" }}>
-        <Typography variant="h6">Health Class</Typography>
-        <Typography variant="body1" style={{ marginTop: "10px" }}>
-          {productData.health_class || "N/A"}
-        </Typography>
-      </Card>
-    </div>
-  </Grid>
+              <Card style={{ padding: "20px", height: "100px" }}>
+                <Typography variant="h6">Health Class</Typography>
+                <Typography variant="body1" style={{ marginTop: "10px" }}>
+                  {productData.health_class || "N/A"}
+                </Typography>
+              </Card>
+            </div>
+          </Grid>
 
-  
-  <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "#2f524d" }}>
             <Fade in={true} timeout={1000}>
+            <Card style={{ padding: "20px", height: "100px" }}>
               <div>
                 <NutritionalQualityCard
                   nutriScore={mapNutriScoreToGrade(productData.calculated_nutriscore)}
                   getMessage={getNutriScoreMessage}
                 />
               </div>
+              </Card>
             </Fade>
+            </div>
           </Grid>
 
-
           {productData.low_nutrient_warnings && productData.low_nutrient_warnings.length > 0 && (
-              <Grid item xs={12}>
-                <Card style={{ padding: "20px" }}>
-                  <Typography align="left" variant="h6" style={{ marginBottom: "1rem", color: "black" }}>
-                    Low Nutrient Warnings
-                  </Typography>
-                  <List>
-                    {productData.low_nutrient_warnings.map((warning, index) => (
-                      <ListItem key={index}>
-                        <ListItemText primary={<span style={{ color: "black" }}>{warning}</span>} />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Card>
-              </Grid>
-            )}
-            
-  
-  <PredictForm prefillData={productData} />
+            <Grid item xs={12}>
+              <Card style={{ padding: "20px" }}>
+                <Typography align="left" variant="h6" style={{ marginBottom: "1rem", color: "black" }}>
+                  Low Nutrient Warnings
+                </Typography>
+                <List>
+                  {productData.low_nutrient_warnings.map((warning, index) => (
+                    <ListItem key={index}>
+                      <ListItemText primary={<span style={{ color: "black" }}>{warning}</span>} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Card>
+            </Grid>
+          )}
 
+          {/* Pass the processed nutritional data to PredictForm */}
+          {processedNutritionalData && <PredictForm prefillData={processedNutritionalData} />}
 
           {/* Reviews section */}
           <Grid item xs={12}>
@@ -650,27 +693,6 @@ const ProductScan = () => {
               </Box>
             </Card>
           </Grid>
-
-          
-
-
-          {productData.low_nutrient_warnings && productData.low_nutrient_warnings.length > 0 && (
-              <Grid item xs={12}>
-                <Card style={{ padding: "20px" }}>
-                  <Typography align="left" variant="h6" style={{ marginBottom: "1rem", color: "black" }}>
-                    Low Nutrient Warnings
-                  </Typography>
-                  <List>
-                    {productData.low_nutrient_warnings.map((warning, index) => (
-                      <ListItem key={index}>
-                        <ListItemText primary={<span style={{ color: "black" }}>{warning}</span>} />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Card>
-              </Grid>
-            )}
-
 
           <Grid item xs={12}>
             <Fade in={true} timeout={1000}>
@@ -749,4 +771,3 @@ const ProductScan = () => {
 }
 
 export default ProductScan
-

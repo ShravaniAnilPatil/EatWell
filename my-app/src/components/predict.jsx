@@ -1,15 +1,26 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import axios from "axios"
 
 const makePrediction = async (inputData, modelName = "lightgbm") => {
   try {
-    const response = await axios.post("http://localhost:5007/api/predict", {
-      ...inputData,
-      model_name: modelName,
-    })
+    console.log("Sending prediction data:", inputData)
+    const response = await axios.post(
+      "http://localhost:5007/api/predict",
+      {
+        ...inputData,
+        model_name: modelName,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    )
     return response.data
   } catch (error) {
-    console.error("Error making prediction:", error)
+    console.error("Error making prediction:", error.response?.data || error.message)
     throw error
   }
 }
@@ -27,17 +38,32 @@ const PredictForm = ({ prefillData }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [results, setResults] = useState(null)
+  const [autoPredicted, setAutoPredicted] = useState(false)
 
+  // This effect runs when prefillData changes
   useEffect(() => {
-    if (prefillData) {
-      setFormData({
-        Protein: prefillData.Protein || 0,
-        Fat: prefillData.Fat || 0,
-        Sodium: prefillData.Sodium || 0,
-        Carbohydrates: prefillData.Carbohydrates || 0,
-        Fiber: prefillData.Fiber || 0,
-        Sugar: prefillData.Sugar || 0,
-      })
+    if (prefillData && Object.keys(prefillData).length > 0) {
+      console.log("Received prefill data:", prefillData)
+
+      // The prefillData is now directly the nutritional values object
+      // No need to extract from a nested structure
+      const newFormData = {
+        Protein: Number.parseFloat(prefillData.Protein || 0),
+        Fat: Number.parseFloat(prefillData.Fat || 0),
+        Sodium: Number.parseFloat(prefillData.Sodium || 0),
+        Carbohydrates: Number.parseFloat(prefillData.Carbohydrates || 0),
+        Fiber: Number.parseFloat(prefillData.Fiber || 0),
+        Sugar: Number.parseFloat(prefillData.Sugar || 0),
+      }
+
+      console.log("Setting form data to:", newFormData)
+      setFormData(newFormData)
+
+      // Automatically trigger prediction when data is received
+      if (!autoPredicted && Object.values(newFormData).some((val) => val > 0)) {
+        setAutoPredicted(true)
+        handlePrediction(newFormData)
+      }
     }
   }, [prefillData])
 
@@ -53,16 +79,15 @@ const PredictForm = ({ prefillData }) => {
     setModelName(e.target.value)
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handlePrediction = async (data) => {
     setLoading(true)
     setError("")
     setResults(null)
 
     try {
-      const result = await makePrediction(formData, modelName)
+      const result = await makePrediction(data, modelName)
       setResults({
-        inputData: formData,
+        inputData: data,
         modelName,
         prediction: result.prediction,
         probabilities: result.probabilities,
@@ -75,8 +100,13 @@ const PredictForm = ({ prefillData }) => {
     }
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    handlePrediction(formData)
+  }
+
   const getProbClass = (probability) => {
-    if (probability > 0.7) return { backgroundColor: "#28a745" } // success
+    if (probability > 0.7) return { backgroundColor: "#28a745" }
     if (probability > 0.4) return { backgroundColor: "#ffc107" } // warning
     return { backgroundColor: "#dc3545" } // danger
   }
@@ -197,7 +227,8 @@ const PredictForm = ({ prefillData }) => {
       fontSize: "1rem",
       lineHeight: "1.5",
       borderRadius: "0.25rem",
-      transition: "color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
+      transition:
+        "color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
       color: "#fff",
       backgroundColor: "#2f524d",
       borderColor: "#2f524d",
@@ -354,7 +385,7 @@ const PredictForm = ({ prefillData }) => {
             </div>
             <div style={styles.cardBody}>
               {error && (
-                <div style={{...styles.alert, ...styles.alertDanger}}>
+                <div style={{ ...styles.alert, ...styles.alertDanger }}>
                   <span style={styles.icon}>⚠️</span>
                   <div>{error}</div>
                 </div>
@@ -364,11 +395,7 @@ const PredictForm = ({ prefillData }) => {
                 <div style={styles.formRow}>
                   <div style={styles.formColumnSelect}>
                     <label style={styles.formLabel}>Select Model</label>
-                    <select
-                      style={styles.formSelect}
-                      value={modelName}
-                      onChange={handleModelChange}
-                    >
+                    <select style={styles.formSelect} value={modelName} onChange={handleModelChange}>
                       <option value="lightgbm">LightGBM</option>
                       <option value="xgboost">XGBoost</option>
                     </select>
@@ -377,7 +404,9 @@ const PredictForm = ({ prefillData }) => {
 
                 <div style={styles.formGrid}>
                   <div>
-                    <label style={styles.formLabel} htmlFor="protein">Protein (g)</label>
+                    <label style={styles.formLabel} htmlFor="protein">
+                      Protein (g)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
@@ -389,7 +418,9 @@ const PredictForm = ({ prefillData }) => {
                     />
                   </div>
                   <div>
-                    <label style={styles.formLabel} htmlFor="carbs">Carbohydrates (g)</label>
+                    <label style={styles.formLabel} htmlFor="carbs">
+                      Carbohydrates (g)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
@@ -401,7 +432,9 @@ const PredictForm = ({ prefillData }) => {
                     />
                   </div>
                   <div>
-                    <label style={styles.formLabel} htmlFor="fat">Fat (g)</label>
+                    <label style={styles.formLabel} htmlFor="fat">
+                      Fat (g)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
@@ -413,7 +446,9 @@ const PredictForm = ({ prefillData }) => {
                     />
                   </div>
                   <div>
-                    <label style={styles.formLabel} htmlFor="sugar">Sugar (g)</label>
+                    <label style={styles.formLabel} htmlFor="sugar">
+                      Sugar (g)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
@@ -425,7 +460,9 @@ const PredictForm = ({ prefillData }) => {
                     />
                   </div>
                   <div>
-                    <label style={styles.formLabel} htmlFor="fiber">Fiber (g)</label>
+                    <label style={styles.formLabel} htmlFor="fiber">
+                      Fiber (g)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
@@ -437,7 +474,9 @@ const PredictForm = ({ prefillData }) => {
                     />
                   </div>
                   <div>
-                    <label style={styles.formLabel} htmlFor="sodium">Sodium (mg)</label>
+                    <label style={styles.formLabel} htmlFor="sodium">
+                      Sodium (mg)
+                    </label>
                     <input
                       type="number"
                       step="0.1"
@@ -451,9 +490,9 @@ const PredictForm = ({ prefillData }) => {
                 </div>
 
                 <div style={{ marginTop: "0.75rem" }}>
-                  <button 
-                    type="submit" 
-                    style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button} 
+                  <button
+                    type="submit"
+                    style={loading ? { ...styles.button, ...styles.buttonDisabled } : styles.button}
                     disabled={loading}
                   >
                     {loading ? (
@@ -471,12 +510,12 @@ const PredictForm = ({ prefillData }) => {
           </div>
 
           {results && (
-            <div style={{...styles.card, ...styles.fadeIn}}>
-              <div style={{...styles.cardHeader, ...styles.cardHeaderSuccess}}>
+            <div style={{ ...styles.card, ...styles.fadeIn }}>
+              <div style={{ ...styles.cardHeader, ...styles.cardHeaderSuccess }}>
                 <h3 style={styles.cardTitle}>Prediction Results</h3>
               </div>
               <div style={styles.cardBody}>
-                <div style={{...styles.alert, ...styles.alertInfo}}>
+                <div style={{ ...styles.alert, ...styles.alertInfo }}>
                   <div style={{ marginRight: "0.5rem" }}>
                     <span style={{ fontSize: "1.2rem" }}>ℹ️</span>
                   </div>
@@ -490,7 +529,13 @@ const PredictForm = ({ prefillData }) => {
 
                 <div style={styles.cardLight}>
                   <h5 style={styles.cardTitleBordered}>Class Probabilities</h5>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                      gap: "0.75rem",
+                    }}
+                  >
                     {Object.entries(results.probabilities).map(([className, prob]) => (
                       <div key={className}>
                         <div style={styles.flexBetween}>
@@ -502,7 +547,7 @@ const PredictForm = ({ prefillData }) => {
                             style={{
                               ...styles.progressBar,
                               ...getProbClass(prob),
-                              width: `${prob * 100}%`
+                              width: `${prob * 100}%`,
                             }}
                             role="progressbar"
                             aria-valuenow={prob * 100}
@@ -515,7 +560,7 @@ const PredictForm = ({ prefillData }) => {
                   </div>
                 </div>
 
-                <div style={{...styles.cardLight, marginTop: "0.75rem"}}>
+                <div style={{ ...styles.cardLight, marginTop: "0.75rem" }}>
                   <h5 style={styles.cardTitleBordered}>Input Summary</h5>
                   <div style={styles.tableResponsive}>
                     <table style={styles.table}>
@@ -540,10 +585,7 @@ const PredictForm = ({ prefillData }) => {
                 </div>
 
                 <div style={styles.flexEnd}>
-                  <button 
-                    onClick={() => window.print()} 
-                    style={{...styles.button, ...styles.outlineButton}}
-                  >
+                  <button onClick={() => window.print()} style={{ ...styles.button, ...styles.outlineButton }}>
                     <span style={styles.icon}>🖨️</span>
                     Print Results
                   </button>
