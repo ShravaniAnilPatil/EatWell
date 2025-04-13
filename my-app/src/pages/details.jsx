@@ -35,6 +35,7 @@ import { Mic, User, MessageSquare, Send, Search } from "lucide-react"
 import { useAuth } from "../context/AuthContext"
 import "../styles/details.css"
 import NutritionalQualityCard from "../components/NutritionalQualityCard"
+import { color } from "framer-motion"
 
 const ProductScan = () => {
   const [productName, setProductName] = useState("")
@@ -400,9 +401,11 @@ const ProductScan = () => {
       case "A":
         return "This product has an excellent nutritional quality. Enjoy without hesitation!"
       case "B":
+         return "This product has a good nutritional quality. Consume in moderation as part of a balanced diet."
       case "C":
-        return "This product has a good nutritional quality. Consume in moderation as part of a balanced diet."
+        return "This product has a moderate nutritional quality. Consume in moderation as per need as part of a balanced diet."
       case "D":
+         return "This product has a poor nutritional quality. It's advisable to limit its consumption and look for healthier alternatives."
       case "E":
         return "This product has a poor nutritional quality. It's advisable to limit its consumption and look for healthier alternatives."
       default:
@@ -565,7 +568,7 @@ const ProductScan = () => {
             </Typography>
           </Grid>
 
-          {/* Nutri-Score and Health Class */}
+          {/* Nutri-Score and Health Class
           <Grid item xs={12} md={6}>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "#2f524d" }}>
               {/* <ScoreCard
@@ -574,19 +577,19 @@ const ProductScan = () => {
                 style={getStyle("nutriScore", mapNutriScoreToGrade(productData.calculated_nutriscore))}
               /> */}
 
-              <Card style={{ padding: "20px", height: "100px" }}>
+              {/* <Card style={{ padding: "20px", height: "150px" }}>
                 <Typography variant="h6">Health Class</Typography>
-                <Typography variant="body1" style={{ marginTop: "10px" }}>
+                <Typography variant="body1" style={{ marginTop: "10px", color: "#2f524d" }}>
                   {productData.health_class || "N/A"}
                 </Typography>
               </Card>
             </div>
-          </Grid>
+          </Grid> */} 
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "#2f524d" }}>
             <Fade in={true} timeout={1000}>
-            <Card style={{ padding: "20px", height: "100px" }}>
+            <Card style={{ padding: "20px", height: "150px" }}>
               <div>
                 <NutritionalQualityCard
                   nutriScore={mapNutriScoreToGrade(productData.calculated_nutriscore)}
@@ -620,7 +623,7 @@ const ProductScan = () => {
 
           {/* Reviews section */}
           <Grid item xs={12}>
-            <Card style={{ padding: "20px", height: "100%", display: "flex", flexDirection: "column" }}>
+            <Card style={{ padding: "20px", display: "flex", flexDirection: "column" }}>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h6" fontWeight="bold">
                   <MessageSquare size={20} style={{ marginRight: "8px", verticalAlign: "middle" }} />
@@ -694,11 +697,7 @@ const ProductScan = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12}>
-            <Fade in={true} timeout={1000}>
-              <div style={{ height: "500px" }}>Recommendation</div>
-            </Fade>
-          </Grid>
+          
         </Grid>
       )}
 

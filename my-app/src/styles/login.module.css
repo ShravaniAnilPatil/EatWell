@@ -5,14 +5,15 @@
     justify-content: center;
     align-items: center;
     margin-top: 7rem;
-    margin: 100px 0;
+    margin: 50px 0;
+    
   }
   
   .login-box {
     display: flex;
     width: 80%;
     max-width: 900px;
-    background: #89f2d4;
+    background: #fdfefe;
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;

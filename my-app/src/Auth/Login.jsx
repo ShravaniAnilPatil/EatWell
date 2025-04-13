@@ -62,7 +62,7 @@ const Login = () => {
     <div className={styles.login}>
       <div className={styles["login-box"]}>
         <div className={styles["left-side"]}>
-          <h2>Welcome Back!</h2>
+          <h2 style={{ color: "white"}}>Welcome Back!</h2>
           <p>Log in to continue accessing your account and Schemes.</p>
           <img src={Loginimg} alt="Login" style={{ maxWidth: "300px", marginBottom: "20px" }} />
         </div>
@@ -103,9 +103,9 @@ const Login = () => {
         </div>
       </div>
       {showPopup && (
-        <div className={styles["popup"]}>
-          <h2>Login Successful!</h2>
-          <p>Redirecting...</p>
+        <div className={styles["popup"]} style={{background: "white", color: "black", height:"100px"}}>
+          <h4>Login Successful!</h4>
+         
         </div>
       )}
     </div>

@@ -27,9 +27,9 @@ const NutritionalQualityCard = ({ nutriScore, getMessage }) => {
         <Typography variant="h6" gutterBottom>
           Nutritional Quality
         </Typography>
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }}>
+        
           <Typography
-            variant="h4"
+            variant="h3"
             style={{
               color: getColor(nutriScore),
               textAlign: "center",
@@ -38,9 +38,9 @@ const NutritionalQualityCard = ({ nutriScore, getMessage }) => {
           >
             {nutriScore}
           </Typography>
-        </motion.div>
         
-        <Typography variant="body1" style={{ marginTop: "10px", textAlign: "center" ,color: "#767676" }}>
+        
+        <Typography variant="body1" style={{ textAlign: "center" ,color: "#767676" }}>
           {getMessage(nutriScore)}
         </Typography>
 
