@@ -3,9 +3,9 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f5f5f5;
+    
     font-family: Arial, sans-serif;
-    margin: 100px 0;
+    margin: 0;
   }
   
   .signupCard {
@@ -13,7 +13,7 @@
     flex-direction: row;
     max-width: 900px;
     width: 100%;
-    background: #b0eee0;
+    background: #fdfefe;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -135,4 +135,60 @@
   .loginLink a:hover {
     text-decoration: underline;
   }
+  .passwordHint {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 4px;
+  }
+  .errorMessage {
+    color: red;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .successMessage {
+    color: green;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .emailExistsError {
+    background-color: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+    text-align: left;
+  }
   
+  .emailExistsError strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #e65100;
+    font-size: 16px;
+  }
+  
+  .emailExistsError p {
+    margin: 5px 0 10px;
+    color: #555;
+  }
+  
+  .loginRedirectBtn {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    margin-top: 5px;
+  }
+  
+  .loginRedirectBtn:hover {
+    background-color: #1976d2;
+  }
+  
+  .errorMessage {
+    margin-top: 15px;
+  }
