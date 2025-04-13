@@ -4,7 +4,7 @@ import styles from "../styles/login.module.css";
 import Loginimg from "../images/Loginimg.png";
 import { useAuth } from "../context/AuthContext";
 const Login = () => {
-  const { login } = useAuth();
+  const { login,user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
  

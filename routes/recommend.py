@@ -5,9 +5,9 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics.pairwise import cosine_similarity
 from recommendation_model.model import Autoencoder  # adjust import as needed
-
+from flask_cors import CORS
 recommend_bp = Blueprint('recommend', __name__)
-
+CORS(recommend_bp)
 # Load data
 df = pd.read_csv('routes/preprocessed_dataset.csv')
 
@@ -67,6 +67,7 @@ def classify_product(row, user_profile):
 
 @recommend_bp.route('/recommend', methods=['POST'])
 def recommend():
+    print("reached")
     data = request.get_json()
     product_name = data.get("product_name")
     user_allergens = data.get("allergens", [])
