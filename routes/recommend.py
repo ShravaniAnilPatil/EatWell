@@ -69,10 +69,11 @@ def classify_product(row, user_profile):
 def recommend():
     print("reached")
     data = request.get_json()
+    print(data)
     product_name = data.get("product_name")
     user_allergens = data.get("allergens", [])
     user_diseases = data.get("diseases", [])
-
+    print(user_allergens, user_diseases)
     if product_name not in df["name"].values:
         return jsonify({"error": "Product not found"}), 404
 

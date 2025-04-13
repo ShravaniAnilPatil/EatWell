@@ -9,11 +9,11 @@ const RecommendationComponent = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
-
+  console.log(user)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/user/profile/${user?.email}`);
+        const response = await fetch(`http://localhost:8000/api/user/profile/${user}`);
         const data = await response.json();
         if (!response.ok) {
           throw new Error(data.error || 'Unable to fetch profile');
@@ -38,7 +38,7 @@ const RecommendationComponent = () => {
     setError('');
     setLoading(true);
     setRecommendations([]);
-
+    console.log(profile)
     try {
       const response = await fetch('http://localhost:5000/recommend', {
         method: 'POST',
@@ -48,6 +48,7 @@ const RecommendationComponent = () => {
           allergens: profile?.allergies?.split(',').map(d => d.trim()) || [],
           diseases: profile?.diseases?.split(',').map(d => d.trim()) || [],
         }),
+        
       });
 
       const data = await response.json();
