@@ -35,6 +35,7 @@ class LoginView(APIView):
 class UserProfileView(APIView):
     def get(self, request, email):
         try:
+            print("reachd")
             user = User.objects.get(email=email)
             return JsonResponse({
                 'status': 'success',
