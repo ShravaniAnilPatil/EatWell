@@ -1,21 +1,22 @@
 /* Main container to center content */
-.container {
+.containerswipe {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     background-color: #f3f4f6;
+    margin: 0%;
   }
   
   /* Row layout for cards */
-  .card-row {
+  .card-rows {
     display: flex;
     gap: 1px;
     width: 100%;
   }
   
   /* Individual card styling */
-  .card {
+  .card-swipe {
     height: 600px;
     width: 500px;
     background: white;
@@ -30,25 +31,25 @@
   }
   
   /* Hover effect for better UI feedback */
-  .card:hover {
+  .card-swipe:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
   }
 
-  .card img{
+  .card-swipe img{
     width: 300; 
     height: 200; 
     margin: 20;
   }
 
-  .card h2{
+  .card-swipe h2{
     color: aliceblue;
   }
 
-  .card p{
+  .card-swipe p{
     color: aliceblue;
   }
 
-  .card button{
+  .card-swipe button{
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   }
   

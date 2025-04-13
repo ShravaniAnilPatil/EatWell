@@ -5,8 +5,11 @@ import pickle
 import json
 import pandas as pd
 
+
+
 app = Flask(__name__, template_folder='templates')
-CORS(app)  
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
+
 
 @app.route('/api/predict', methods=['POST'])
 def api_predict():
@@ -66,4 +69,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5005)
+    app.run(debug=True, port=5007)
