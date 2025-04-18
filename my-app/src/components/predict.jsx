@@ -232,7 +232,7 @@ const PredictForm = ({ prefillData }) => {
       color: "#fff",
       backgroundColor: "#2f524d",
       borderColor: "#2f524d",
-      width: "100%",
+      width: "20%",
       cursor: "pointer",
     },
     buttonDisabled: {
@@ -341,7 +341,7 @@ const PredictForm = ({ prefillData }) => {
     },
     flexEnd: {
       display: "flex",
-      justifyContent: "flex-end",
+      justifyContent: "center",
       marginTop: "0.75rem",
     },
     outlineButton: {
@@ -560,7 +560,7 @@ const PredictForm = ({ prefillData }) => {
                   </div>
                 </div>
 
-                <div style={{ ...styles.cardLight, marginTop: "0.75rem" }}>
+                {/* <div style={{ ...styles.cardLight, marginTop: "0.75rem" }}>
                   <h5 style={styles.cardTitleBordered}>Input Summary</h5>
                   <div style={styles.tableResponsive}>
                     <table style={styles.table}>
@@ -582,7 +582,7 @@ const PredictForm = ({ prefillData }) => {
                       </tbody>
                     </table>
                   </div>
-                </div>
+                </div> */}
 
                 <div style={styles.flexEnd}>
                   <button onClick={() => window.print()} style={{ ...styles.button, ...styles.outlineButton }}>

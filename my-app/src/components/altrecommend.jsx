@@ -1,64 +1,99 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { useAuth } from "../context/AuthContext";
+import '../styles/RecommendationComponent.css';
 
-const AlternativeProducts = () => {
-    const [productName, setProductName] = useState("");
-    const [alternatives, setAlternatives] = useState([]);
-    const [error, setError] = useState("");
-
-    const fetchAlternatives = async () => {
-        if (!productName) {
-            setError("Please enter a product name.");
-            return;
+const RecommendationComponent = () => {
+  const [productName, setProductName] = useState('');
+  const [recommendations, setRecommendations] = useState([]);
+  const [error, setError] = useState('');
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  console.log(user)
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/user/profile/${user}`);
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to fetch profile');
         }
-        
-        setError("");  // Clear previous errors
-        setAlternatives([]);  // Clear previous results
-
-        try {
-            const response = await fetch(`http://127.0.0.1:5010/recommend?product_name=${encodeURIComponent(productName)}`);
-            console.log("sent")
-            const data = await response.json();
-            console.log(data)
-            if (!response.ok) {
-                setError(data.error || "Something went wrong.");
-            } else {
-                setAlternatives(data.healthier_alternatives || data.alternative || []);
-            }
-        } catch (err) {
-            setError("Failed to fetch data. Check API or network connection.");
-        }
+        setProfile(data.data);
+      } catch (err) {
+        setError(err.message);
+      }
     };
 
-    return (
-        <div style={{ textAlign: "center", maxWidth: "400px", margin: "auto", padding: "20px" }}>
-            <h2>Find Healthier Alternatives</h2>
-            <input
-                type="text"
-                placeholder="Enter product name"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                style={{ padding: "10px", width: "100%", marginBottom: "10px" }}
-            />
-            <button onClick={fetchAlternatives} style={{ padding: "10px 15px", cursor: "pointer" }}>
-                Search
-            </button>
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
 
-            {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+  const getRecommendations = async () => {
+    if (!productName.trim()) {
+      setError('Please enter a product name.');
+      return;
+    }
 
-            {alternatives.length > 0 && (
-                <div style={{ marginTop: "20px", textAlign: "left" }}>
-                    <h3>Alternatives:</h3>
-                    <ul>
-                        {alternatives.map((product, index) => (
-                            <li key={index}>
-                                <strong>{product.name}</strong> - Score: {product.health_score.toFixed(2)}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+    setError('');
+    setLoading(true);
+    setRecommendations([]);
+    console.log(profile)
+    try {
+      const response = await fetch('http://localhost:5000/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_name: productName,
+          allergens: profile?.allergies?.split(',').map(d => d.trim()) || [],
+          diseases: profile?.diseases?.split(',').map(d => d.trim()) || [],
+        }),
+        
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Something went wrong');
+      setRecommendations(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="recommendation-container">
+      <h2 className="recommendation-title">Product Recommendations</h2>
+
+      <div className="form-group">
+        <label >Product Name:</label>
+        <input
+          type="text"
+          placeholder="e.g., Milka - 156g"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+        />
+      </div>
+
+      <button onClick={getRecommendations} className="submit-button">
+        {loading ? "Generating..." : "Get Recommendations"}
+      </button>
+
+      
+
+      {recommendations.length > 0 && (
+        <div className="card-container">
+          {recommendations.map((product, index) => (
+            <div className="card" key={index}>
+              <h3 className="card-title" style={{ fontWeight: 'bold' }}>{product.name}</h3>
+              <p style={{fontSize: '1.2rem'}}>Category: {product.category}</p>
+              <p style={{fontSize: '1.2rem'}}>Health Class:{product.health_class}</p>
+            </div>
+          ))}
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
-export default AlternativeProducts;
+export default RecommendationComponent;
