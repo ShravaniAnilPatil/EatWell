@@ -586,7 +586,7 @@ const ProductScan = () => {
           <Grid item xs={12} md={6}>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", color: "#2f524d" }}>
             <Fade in={true} timeout={1000}>
-            <Card style={{ padding: "20px", height: "100px" }}>
+            <Card style={{ padding: "20px", height: "200px" }}>
               <div>
                 <NutritionalQualityCard
                   nutriScore={mapNutriScoreToGrade(productData.calculated_nutriscore)}

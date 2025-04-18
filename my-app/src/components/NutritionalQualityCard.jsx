@@ -40,7 +40,7 @@ const NutritionalQualityCard = ({ nutriScore, getMessage }) => {
           </Typography>
         </motion.div>
         
-        <Typography variant="body1" style={{ marginTop: "10px", textAlign: "center" ,color: "#767676" }}>
+        <Typography variant="body1" style={{ marginTop: "10px", textAlign: "center" ,color: "#767676", height: " 600px" }}>
           {getMessage(nutriScore)}
         </Typography>
 
