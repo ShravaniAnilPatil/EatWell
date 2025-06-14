@@ -7,6 +7,7 @@ import { Bar } from "react-chartjs-2"
 import "chart.js/auto"
 import "../styles/details.css"
 import PredictForm from "../components/predict"
+import { Link } from "react-router-dom"
 import {
   Grid,
   Typography,
@@ -194,7 +195,7 @@ const ProductScan = () => {
     if (confirmedProductName.trim()) {
       try {
         console.log("Fetching product data for:", confirmedProductName)
-        const response = await axios.get("http://127.0.0.1:5000/api/products", {
+        const response = await axios.get("http://127.0.0.1:5010/api/products", {
           params: { name: confirmedProductName },
         })
 
@@ -215,7 +216,7 @@ const ProductScan = () => {
     if (scannedText.trim()) {
       try {
         console.log("Fetching product data for scanned text:", scannedText)
-        const response = await axios.get("http://127.0.0.1:5000/api/products", {
+        const response = await axios.get("http://127.0.0.1:5010/api/products", {
           params: { name: scannedText },
         })
 
@@ -617,10 +618,10 @@ const ProductScan = () => {
               </Card>
             </Grid>
           )}
-
+            
           {/* Pass the processed nutritional data to PredictForm */}
           {processedNutritionalData && <PredictForm prefillData={processedNutritionalData} />}
-
+          <Link to='/alternatives' state={{ productName: productData.product_name || productData.name || "N/A" }}><button style={{"margin-left":"565px"}}>See Healthier Alternatives</button></Link>
           {/* Reviews section */}
           <Grid item xs={12}>
             <Card style={{ padding: "20px", display: "flex", flexDirection: "column" }}>
@@ -639,7 +640,7 @@ const ProductScan = () => {
                   {reviewsError}
                 </Typography>
               )}
-
+             
               <Box sx={{ overflowY: "auto", flexGrow: 1 }}>
                 {reviewsLoading ? (
                   <Box display="flex" justifyContent="center" py={3}>

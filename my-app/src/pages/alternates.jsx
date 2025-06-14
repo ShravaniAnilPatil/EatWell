@@ -103,11 +103,14 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import "../styles/alternates.css";
-
+import { useLocation } from 'react-router-dom';
 function Recommendations() {
     const [recommendations, setRecommendations] = useState([]);
     const [error, setError] = useState(null);
-
+    const location = useLocation();
+    const productName = location.state?.productName || "Unknown";
+    console.log(location.state)
+    console.log(productName)
     useEffect(() => {
         const fetchRecommendations = async () => {
             try {

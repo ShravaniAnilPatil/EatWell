@@ -57,7 +57,7 @@ const styles = {
   },
   myMessage: {
     alignSelf: "flex-end",
-    backgroundColor: "#00796b",
+    
     color: "white",
     boxShadow: "0 2px 12px rgba(0,121,107,0.2)",
   },
@@ -69,7 +69,7 @@ const styles = {
   },
   adminMessage: {
     alignSelf: "center",
-    backgroundColor: "#b2dfdb",
+    backgroundColor: "#fff",
     color: "#004d40",
     maxWidth: "95%",
     boxShadow: "0 2px 12px rgba(178,223,219,0.3)",
@@ -248,14 +248,14 @@ const Chat = () => {
             <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
               {msg.username}
             </Typography>
-            <Typography variant="body1">{msg.text}</Typography>
+            <Typography variant="body1" style={{color: "black"}}>{msg.text}</Typography>
             <Box sx={styles.productInfo}>
               <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
                 Product: {msg.product_name}
               </Typography>
-              <Typography variant="body2">Review: {msg.review}</Typography>
+              <Typography variant="body2"style={{color: "black"}}>Review: {msg.review}</Typography>
             </Box>
-            <Typography sx={styles.timestamp}>{new Date(msg.timestamp).toLocaleString()}</Typography>
+            <Typography sx={styles.timestamp} style={{color: "black"}}>{new Date(msg.timestamp).toLocaleString()}</Typography>
           </Paper>
         ))}
         <div ref={messagesEndRef} />
